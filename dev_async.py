@@ -13,7 +13,7 @@ OPENAI_PASSWORD = os.environ['OPENAI_PASSWORD']
 
 
 async def main_async():
-    print("Attempting to get token for DALL-E...")
+    print("Attempting to get token for DALL·E...")
     token = await get_bearer_token_async(OPENAI_USERNAME, OPENAI_PASSWORD)
     print("Token:", token)
 

@@ -13,7 +13,7 @@ OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
 
 
 def main():
-    print("Attempting to get token for DALL-E...")
+    print("Attempting to get token for DALL·E...")
     token = get_bearer_token(OPENAI_USERNAME, OPENAI_PASSWORD)
     print("Token:", token)
 

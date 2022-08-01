@@ -1,13 +1,13 @@
-# pydalle: A DALL-E 2 API Wrapper for Python
+# pydalle: A DALL·E 2 API Wrapper for Python
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydalle)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/pydalle)
 ![PyPI - License](https://img.shields.io/pypi/l/pydalle)
 
-This library provides basic programmatic access to the DALL-E 2 API.
+This library provides basic programmatic access to the DALL·E 2 API.
 
 The intent of this library is to provide researchers with a means to easily layout
-results from DALL-E 2 into a jupyter notebook or similar.
+results from DALL·E 2 into a jupyter notebook or similar.
 
 ## Installation
 
@@ -27,9 +27,9 @@ While not required, the PIL library is also recommended for image processing.
 
 ## Tips
 
-- Ensure your usage of DALL-E 2 abides by DALL-E 2's [content policy][1].
+- Ensure your usage of DALL·E 2 abides by DALL·E 2's [content policy][1].
 
-- Be mindful about how easy this library makes it for you to spend your money / DALL-E 2 credits.
+- Be mindful about how easy this library makes it for you to spend your money / DALL·E 2 credits.
 
 - The primary benefit of our library over [ezzcodeezzlife/dalle2-in-python][2]
   is that you do not need to manually paste in a session token and can just provide your username and password.
