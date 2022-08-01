@@ -50,6 +50,9 @@ class Task:
                    generations=GenerationList.from_dict(d["generations"]) if "generations" in d else None,
                    prompt=Prompt.from_dict(d["prompt"]))
 
+    def __str__(self):
+        return f"Task(id={self.id}, task_type={self.task_type}, status={self.status})"
+
 
 @dataclass
 class Prompt:

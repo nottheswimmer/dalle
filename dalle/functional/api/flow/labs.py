@@ -36,13 +36,20 @@ def get_tasks_flow(bearer_token: str, from_ts: Optional[int] = None) -> HttpFlow
         raise FlowError("Failed to parse response", r) from e
 
 
-def create_task_flow(bearer_token: str,
-                     caption: str,
-                     task_type: TaskType = "text2im",
-                     batch_size: int = 4) -> HttpFlow[Task]:
-    r = yield create_task_request(bearer_token, caption, task_type, batch_size)
+def _create_task_flow(bearer_token: str,
+                      task_type: TaskType,
+                      batch_size: int,
+                      caption: Optional[str] = None,  # for 'text2im' task type
+                      parent_generation_id: Optional[str] = None,  # for 'variations' task type
+                      ) -> HttpFlow[Task]:
+    r = yield create_task_request(bearer_token, task_type,
+                                  caption=caption, batch_size=batch_size,
+                                  parent_generation_id=parent_generation_id)
     while r.status_code == 504:
-        r = yield create_task_request(bearer_token, caption, task_type, batch_size, sleep=DEFAULT_INTERVAL)
+        r = yield create_task_request(bearer_token, task_type,
+                                      caption=caption, batch_size=batch_size,
+                                      parent_generation_id=parent_generation_id,
+                                      sleep=DEFAULT_INTERVAL)
     j = try_json(r, status_code=200)
     try:
         return Task.from_dict(j)
@@ -50,8 +57,13 @@ def create_task_flow(bearer_token: str,
         raise FlowError("Failed to parse response", r) from e
 
 
-def create_text2im_task_flow(bearer_token: str, caption: str, batch_size: Optional[int] = 4) -> HttpFlow[Task]:
-    return create_task_flow(bearer_token, caption=caption, task_type="text2im", batch_size=batch_size)
+def create_text2im_task_flow(bearer_token: str, caption: str, batch_size: int = 4) -> HttpFlow[Task]:
+    return _create_task_flow(bearer_token, caption=caption, task_type="text2im", batch_size=batch_size)
+
+
+def create_variations_task_flow(bearer_token: str, parent_generation_id: str, batch_size: int = 3) -> HttpFlow[Task]:
+    return _create_task_flow(bearer_token, task_type="variations", batch_size=batch_size,
+                             parent_generation_id=parent_generation_id)
 
 
 def get_task_flow(bearer_token: str, task_id: str) -> HttpFlow[Task]:
@@ -67,7 +79,8 @@ def get_task_flow(bearer_token: str, task_id: str) -> HttpFlow[Task]:
 
 def poll_for_task_completion_flow(bearer_token: str,
                                   task_id: str,
-                                  interval: float = DEFAULT_INTERVAL, _max_attempts: int = 1000) -> HttpFlow[Task]:
+                                  interval: float = DEFAULT_INTERVAL,
+                                  _max_attempts: int = 1000) -> HttpFlow[Task]:
     r = yield get_task_request(bearer_token, task_id=task_id)
     for _ in range(_max_attempts):
         if r.status_code != 504:

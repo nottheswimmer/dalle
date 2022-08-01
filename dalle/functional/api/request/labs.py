@@ -28,16 +28,19 @@ def login_request(access_token: str, sleep: Optional[float] = None) -> HttpReque
 
 
 def create_task_request(bearer_token: str,
-                        caption: str,
-                        task_type: TaskType = "text2im",
-                        batch_size: int = 4,
+                        task_type: TaskType,
+                        batch_size: int,
+                        caption: Optional[str] = None,
+                        parent_generation_id: Optional[str] = None,
                         sleep: Optional[float] = None) -> HttpRequest:
     return HttpRequest(method="post",
                        url=OPENAI_LABS_TASKS_URL,
                        data=json.dumps(
                            filter_none(
                                {"task_type": task_type, "prompt":
-                                   filter_none({"caption": caption, "batch_size": batch_size})})
+                                   filter_none({"caption": caption,
+                                                "batch_size": batch_size,
+                                                "parent_generation_id": parent_generation_id})})
                        ),
                        headers={"Authorization": f"Bearer {bearer_token}",
                                 "Content-Type": "application/json"},
