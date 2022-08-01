@@ -32,8 +32,8 @@ class Task:
     id: str
     created: int
     task_type: TaskType
-    status: Union[Literal["succeeded"], Literal["pending"]]
-    status_information: dict
+    status: Union[Literal["succeeded"], Literal["pending"], Literal["rejected"]]
+    status_information: 'StatusInformation'
     prompt_id: str
     generations: Optional["GenerationList"]
     prompt: "Prompt"
@@ -45,13 +45,26 @@ class Task:
                    created=d["created"],
                    task_type=d["task_type"],
                    status=d["status"],
-                   status_information=d["status_information"],
+                   status_information=StatusInformation.from_dict(d["status_information"]),
                    prompt_id=d["prompt_id"],
                    generations=GenerationList.from_dict(d["generations"]) if "generations" in d else None,
-                   prompt=Prompt.from_dict(d["prompt"]))
+                   prompt=Prompt.from_dict(d["prompt"]), )
 
     def __str__(self):
         return f"Task(id={self.id}, task_type={self.task_type}, status={self.status})"
+
+
+@dataclass
+class StatusInformation:
+    type: Optional[Literal["error"]] = None
+    message: Optional[Literal["Your task failed as a result of our safety system."]] = None
+    code: Optional[Literal["task_failed_text_safety_system"]] = None
+
+    @classmethod
+    def from_dict(cls, d: dict) -> 'StatusInformation':
+        return cls(type=d.get("type"),
+                   message=d.get("message"),
+                   code=d.get("code"))
 
 
 @dataclass
@@ -106,6 +119,7 @@ class GenerationList:
 
     def __getitem__(self, index):
         return self.data[index]
+
 
 @dataclass
 class Generation:
