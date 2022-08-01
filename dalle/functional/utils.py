@@ -1,4 +1,7 @@
+from typing import Optional
 from urllib.parse import parse_qs, urlparse
+
+from dalle.functional.types import HttpResponse, JsonDict, FlowError
 
 
 def get_query_param(url: str, param: str) -> str:
@@ -12,3 +15,19 @@ def send_from(generator, fn):
             r = yield generator.send(r)
         except StopIteration as e:
             return fn(e.value)
+
+
+def try_json(r: HttpResponse, status_code: Optional[int] = None) -> JsonDict:
+    if status_code is not None and r.status_code != status_code:
+        raise FlowError("Request returned an unexpected status code", r)
+    try:
+        out = r.json()
+    except Exception as e:
+        raise FlowError("Failed to parse response", r) from e
+    if not isinstance(out, dict):
+        raise FlowError("Response was not a JSON object", r)
+    return out
+
+
+def filter_none(d: JsonDict) -> JsonDict:
+    return {k: v for k, v in d.items() if v is not None}

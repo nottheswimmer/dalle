@@ -1,3 +1,5 @@
+import asyncio
+import time
 from typing import Optional
 
 try:
@@ -34,6 +36,8 @@ def session_flow(__flow: HttpFlowFunc[T], /, **kwargs) -> T:
 def request(r: HttpRequest, /, session: Optional['requests.Session'] = None) -> HttpResponse:
     if session is None:
         session = requests.Session()
+    if r.sleep is not None:
+        time.sleep(r.sleep)
     response = session.request(r.method, r.url, params=r.params, data=r.data, headers=r.headers)
     return _requests_response_to_http_response(response, r)
 
@@ -53,6 +57,8 @@ async def session_flow_async(__flow: HttpFlowFunc[T], /, **kwargs) -> T:
 async def request_async(r: HttpRequest, /, session: Optional['aiohttp.ClientSession'] = None) -> HttpResponse:
     if not session:
         session = aiohttp
+    if r.sleep is not None:
+        await asyncio.sleep(r.sleep)
     async with session.request(r.method, r.url, params=r.params, data=r.data, headers=r.headers) as response:
         return await _aiohttp_response_to_http_response(response, r)
 

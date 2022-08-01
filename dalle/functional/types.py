@@ -21,6 +21,7 @@ class HttpRequest:
     params: Optional[Dict[str, Union[int, str]]] = None
     headers: Optional[Dict[str, str]] = None
     data: Optional[str] = None
+    sleep: Optional[float] = None
 
 
 _CENSORED_REQUEST_KEYS = {"authorization", "password", "code", "code_verifier"}
