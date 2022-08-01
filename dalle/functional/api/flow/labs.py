@@ -39,17 +39,18 @@ def get_tasks_flow(bearer_token: str, from_ts: Optional[int] = None) -> HttpFlow
 def _create_task_flow(bearer_token: str,
                       task_type: TaskType,
                       batch_size: int,
-                      caption: Optional[str] = None,  # for 'text2im' task type
-                      parent_generation_id: Optional[str] = None,  # for 'variations' task type
+                      caption: Optional[str] = None,  # for 'text2im' and 'inpainting' task types
+                      parent_id_or_image: Optional[str] = None,  # for 'variations' and 'inpainting' task types
+                      masked_image: Optional[str] = None  # for 'inpainting' task type
                       ) -> HttpFlow[Task]:
-    r = yield create_task_request(bearer_token, task_type,
+    request = create_task_request(bearer_token, task_type,
                                   caption=caption, batch_size=batch_size,
-                                  parent_generation_id=parent_generation_id)
+                                  parent_id_or_image=parent_id_or_image,
+                                  masked_image=masked_image)
+    r = yield request
     while r.status_code == 504:
-        r = yield create_task_request(bearer_token, task_type,
-                                      caption=caption, batch_size=batch_size,
-                                      parent_generation_id=parent_generation_id,
-                                      sleep=DEFAULT_INTERVAL)
+        request.sleep = DEFAULT_INTERVAL
+        r = yield request
     j = try_json(r, status_code=200)
     try:
         return Task.from_dict(j)
@@ -61,9 +62,23 @@ def create_text2im_task_flow(bearer_token: str, caption: str, batch_size: int = 
     return _create_task_flow(bearer_token, caption=caption, task_type="text2im", batch_size=batch_size)
 
 
-def create_variations_task_flow(bearer_token: str, parent_generation_id: str, batch_size: int = 3) -> HttpFlow[Task]:
+def create_variations_task_flow(bearer_token: str, parent_id_or_image: str, batch_size: int = 3) -> HttpFlow[Task]:
     return _create_task_flow(bearer_token, task_type="variations", batch_size=batch_size,
-                             parent_generation_id=parent_generation_id)
+                             parent_id_or_image=parent_id_or_image)
+
+
+def create_inpainting_task_flow(bearer_token: str, caption: str,
+                                masked_image: str,
+                                parent_id_or_image: Optional[str] = None,
+                                batch_size: int = 3) -> HttpFlow[Task]:
+    if parent_id_or_image is None:
+        parent_id_or_image = masked_image
+    return _create_task_flow(bearer_token,
+                             task_type="inpainting",
+                             batch_size=batch_size,
+                             caption=caption,
+                             parent_id_or_image=parent_id_or_image,
+                             masked_image=masked_image)
 
 
 def get_task_flow(bearer_token: str, task_id: str) -> HttpFlow[Task]:

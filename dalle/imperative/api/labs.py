@@ -4,7 +4,7 @@ from dalle.functional.api.response.labs import TaskList, Task
 from dalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
     OPENAI_AUTH0_AUDIENCE, OPENAI_LABS_REDIRECT_URI, OPENAI_AUTH0_SCOPE
 from dalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
-    create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow
+    create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, create_inpainting_task_flow
 from dalle.imperative.api.auth0 import get_access_token, get_access_token_async
 from dalle.imperative.outside.internet import session_flow, session_flow_async
 
@@ -52,13 +52,28 @@ async def create_text2im_task_async(bearer_token: str, caption: str, batch_size:
                                     bearer_token=bearer_token)
 
 
-def create_variations_task(bearer_token: str, parent_generation_id: str, batch_size: int = 3) -> Task:
-    return session_flow(create_variations_task_flow, parent_generation_id=parent_generation_id, batch_size=batch_size,
-                        bearer_token=bearer_token)
+def create_variations_task(bearer_token: str, parent_id_or_image: str, batch_size: int = 3) -> Task:
+    return session_flow(create_variations_task_flow, parent_id_or_image=parent_id_or_image,
+                        batch_size=batch_size, bearer_token=bearer_token)
 
 
-async def create_variations_task_async(bearer_token: str, parent_generation_id: str, batch_size: int = 3) -> Task:
-    return await session_flow_async(create_variations_task_flow, parent_generation_id=parent_generation_id,
+async def create_variations_task_async(bearer_token: str, parent_id_or_image: str,
+                                       batch_size: int = 3) -> Task:
+    return await session_flow_async(create_variations_task_flow,
+                                    parent_id_or_image=parent_id_or_image,
+                                    batch_size=batch_size, bearer_token=bearer_token)
+
+
+def create_inpainting_task(bearer_token: str, caption: str, masked_image: str, parent_id_or_image: Optional[str] = None,
+                           batch_size: int = 3) -> Task:
+    return session_flow(create_inpainting_task_flow, caption=caption, parent_id_or_image=parent_id_or_image,
+                        masked_image=masked_image, batch_size=batch_size, bearer_token=bearer_token)
+
+
+async def create_inpainting_task_async(bearer_token: str, caption: str, masked_image: str,
+                                       parent_id_or_image: Optional[str] = None, batch_size: int = 3) -> Task:
+    return await session_flow_async(create_inpainting_task_flow, caption=caption,
+                                    parent_id_or_image=parent_id_or_image, masked_image=masked_image,
                                     batch_size=batch_size, bearer_token=bearer_token)
 
 

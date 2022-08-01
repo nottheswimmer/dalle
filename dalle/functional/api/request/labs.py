@@ -31,8 +31,10 @@ def create_task_request(bearer_token: str,
                         task_type: TaskType,
                         batch_size: int,
                         caption: Optional[str] = None,
-                        parent_generation_id: Optional[str] = None,
+                        parent_id_or_image: Optional[str] = None,
+                        masked_image: Optional[str] = None,
                         sleep: Optional[float] = None) -> HttpRequest:
+    image_key = _classify_image_parameter(parent_id_or_image)
     return HttpRequest(method="post",
                        url=OPENAI_LABS_TASKS_URL,
                        data=json.dumps(
@@ -40,8 +42,18 @@ def create_task_request(bearer_token: str,
                                {"task_type": task_type, "prompt":
                                    filter_none({"caption": caption,
                                                 "batch_size": batch_size,
-                                                "parent_generation_id": parent_generation_id})})
+                                                image_key: parent_id_or_image,
+                                                "masked_image": masked_image})})
                        ),
                        headers={"Authorization": f"Bearer {bearer_token}",
                                 "Content-Type": "application/json"},
                        sleep=sleep)
+
+
+def _classify_image_parameter(parent_id_or_image):
+    if parent_id_or_image is not None:
+        if parent_id_or_image.startswith("generation-"):
+            return "parent_generation_id"
+        elif parent_id_or_image.startswith("prompt-"):
+            return "parent_prompt_id"
+    return "image"

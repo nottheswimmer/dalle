@@ -43,6 +43,8 @@ async def main_async():
     print(task)
     print()
 
+    # For additional examples, see dev.py and dev.ipynb
+
 
 if __name__ == '__main__':
     asyncio.run(main_async())
