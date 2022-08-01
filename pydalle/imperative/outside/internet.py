@@ -1,6 +1,6 @@
 import asyncio
 import time
-from typing import Optional
+from typing import Optional, Dict
 
 try:
     import requests
@@ -21,10 +21,12 @@ except ImportError as _e:
 from pydalle.functional.types import HttpFlowFunc, T, HttpRequest, HttpResponse
 
 
-def session_flow(__flow: HttpFlowFunc[T], /, **kwargs) -> T:
+def session_flow(__flow: HttpFlowFunc[T], __headers=Optional[Dict[str, str]], /, **kwargs) -> T:
     handler = __flow(**kwargs)
     next_request = next(handler)
     session = requests.Session()
+    if __headers:
+        session.headers.update(__headers)
     while True:
         try:
             response = request(next_request, session=session)
@@ -42,10 +44,12 @@ def request(r: HttpRequest, /, session: Optional['requests.Session'] = None) -> 
     return _requests_response_to_http_response(response, r)
 
 
-async def session_flow_async(__flow: HttpFlowFunc[T], /, **kwargs) -> T:
+async def session_flow_async(__flow: HttpFlowFunc[T], __headers=Optional[Dict[str, str]], /, **kwargs) -> T:
     handler = __flow(**kwargs)
     next_request = next(handler)
     async with aiohttp.ClientSession() as session:
+        if __headers:
+            session.headers.update(__headers)
         while True:
             try:
                 response = await request_async(next_request, session=session)

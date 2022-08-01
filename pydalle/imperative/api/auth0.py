@@ -1,3 +1,5 @@
+from typing import Optional, Dict
+
 from pydalle.functional.api.flow.auth0 import get_access_token_flow
 from pydalle.functional.api.request.auth0 import urlsafe_b64encode_string
 from pydalle.imperative.outside.internet import session_flow, session_flow_async
@@ -5,8 +7,8 @@ from pydalle.imperative.outside.sysrand import secure_random_choice
 
 
 def get_access_token(username: str, password: str, domain: str, client_id: str,
-                     audience: str,  redirect_uri: str, scope: str) -> str:
-    return session_flow(get_access_token_flow,
+                     audience: str, redirect_uri: str, scope: str, headers: Optional[Dict[str, str]] = None) -> str:
+    return session_flow(get_access_token_flow, headers,
                         username=username, password=password, domain=domain,
                         client_id=client_id, audience=audience,
                         redirect_uri=redirect_uri, scope=scope,
@@ -15,9 +17,10 @@ def get_access_token(username: str, password: str, domain: str, client_id: str,
                         nonce=_random_secure_urlsafe_b64encoded_string())
 
 
-async def get_access_token_async(username: str,  password: str, domain: str, client_id: str,
-                                 audience: str, redirect_uri: str, scope: str) -> str:
-    return await session_flow_async(get_access_token_flow,
+async def get_access_token_async(username: str, password: str, domain: str, client_id: str,
+                                 audience: str, redirect_uri: str, scope: str,
+                                 headers: Optional[Dict[str, str]] = None) -> str:
+    return await session_flow_async(get_access_token_flow, headers,
                                     username=username, password=password, domain=domain,
                                     client_id=client_id, audience=audience,
                                     redirect_uri=redirect_uri, scope=scope,
