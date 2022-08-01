@@ -41,8 +41,8 @@ While not required, the PIL library is also recommended for image processing.
 - `get_task` / `get_task_async`: Get a task by ID
 - `get_tasks` / `get_tasks_async`: Get tasks created after a given timestamp
 - `create_text2im_task` / `create_text2im_task_async`: Create a task to generate an image from a text
-- `create_variations_task` / `create_variations_task_async`: Create a task to generate variations of a generated image
-- `create_inpainting_task` / `create_inpainting_task_async`: Create a task to generate an image from a mask
+- `create_variations_task` / `create_variations_task_async`: Create a task to generate variations of an image
+- `create_inpainting_task` / `create_inpainting_task_async`: Create a task to generate an image from a mask and caption
 - `poll_for_task_completion /` `poll_for_task_completion_async`: Poll for a task until it is complete
 
 ## Image input
