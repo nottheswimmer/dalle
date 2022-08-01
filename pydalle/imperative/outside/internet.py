@@ -5,7 +5,7 @@ from typing import Optional
 try:
     import requests
 except ImportError as _e:
-    from dalle.functional.types import LazyImportError
+    from pydalle.functional.types import LazyImportError
 
     requests = LazyImportError("requests", _e)
     del LazyImportError
@@ -13,12 +13,12 @@ except ImportError as _e:
 try:
     import aiohttp
 except ImportError as _e:
-    from dalle.functional.types import LazyImportError
+    from pydalle.functional.types import LazyImportError
 
     aiohttp = LazyImportError("aiohttp", _e)
     del LazyImportError
 
-from dalle.functional.types import HttpFlowFunc, T, HttpRequest, HttpResponse
+from pydalle.functional.types import HttpFlowFunc, T, HttpRequest, HttpResponse
 
 
 def session_flow(__flow: HttpFlowFunc[T], /, **kwargs) -> T:

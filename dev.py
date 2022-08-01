@@ -5,7 +5,7 @@ from urllib.request import urlopen
 import base64
 from PIL import Image
 
-from dalle.imperative.api.labs import get_bearer_token, get_tasks, create_text2im_task, poll_for_task_completion, \
+from pydalle.imperative.api.labs import get_bearer_token, get_tasks, create_text2im_task, poll_for_task_completion, \
     create_variations_task, create_inpainting_task
 
 OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')

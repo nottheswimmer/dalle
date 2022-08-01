@@ -1,10 +1,10 @@
 import json
 from typing import Optional
 
-from dalle.functional.api.response.labs import TaskType
-from dalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, OPENAI_LABS_TASK_URL_TEMPLATE
-from dalle.functional.types import HttpRequest
-from dalle.functional.utils import filter_none
+from pydalle.functional.api.response.labs import TaskType
+from pydalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, OPENAI_LABS_TASK_URL_TEMPLATE
+from pydalle.functional.types import HttpRequest
+from pydalle.functional.utils import filter_none
 
 
 def get_task_request(bearer_token: str, task_id: str, sleep: Optional[float] = None) -> HttpRequest:

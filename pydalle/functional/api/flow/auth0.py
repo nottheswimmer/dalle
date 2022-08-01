@@ -1,7 +1,7 @@
-from dalle.functional.api.request.auth0 import request_access_token, request_provide_username_password, \
+from pydalle.functional.api.request.auth0 import request_access_token, request_provide_username_password, \
     request_provide_username, request_authorization_code
-from dalle.functional.types import HttpFlow, FlowError
-from dalle.functional.utils import get_query_param, send_from
+from pydalle.functional.types import HttpFlow, FlowError
+from pydalle.functional.utils import get_query_param, send_from
 
 
 def get_access_token_flow(*args, **kwargs) -> HttpFlow[str]:

@@ -1,9 +1,29 @@
-# DALL-E 2 Python API Wrapper
+# pydalle: A DALL-E 2 API Wrapper for Python
+
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydalle)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/pydalle)
+![PyPI - License](https://img.shields.io/pypi/l/pydalle)
 
 This library provides basic programmatic access to the DALL-E 2 API.
 
 The intent of this library is to provide researchers with a means to easily layout
 results from DALL-E 2 into a jupyter notebook or similar.
+
+## Installation
+
+    pip install pydalle
+
+If you want to use sync methods, also make sure you have the `requests` library installed.
+
+    pip install requests
+
+If you want to use async methods, also make sure you have the `aiohttp` library installed.
+
+    pip install aiohttp
+
+While not required, the PIL library is also recommended for image processing.
+
+    pip install Pillow
 
 ## Tips
 
@@ -51,3 +71,4 @@ See the following files for examples:
 
 [1]: https://labs.openai.com/policies/content-policy
 [2]: https://github.com/ezzcodeezzlife/dalle2-in-python
+[requests]: https://requests.readthedocs.io/en/master/

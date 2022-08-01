@@ -3,8 +3,8 @@ from base64 import urlsafe_b64encode
 from hashlib import sha256
 from urllib.parse import urlencode
 
-from dalle.functional.assumptions import AUTH0_TOKEN_URL_TEMPLATE, AUTH0_AUTHORIZE_URL_TEMPLATE
-from dalle.functional.types import HttpRequest
+from pydalle.functional.assumptions import AUTH0_TOKEN_URL_TEMPLATE, AUTH0_AUTHORIZE_URL_TEMPLATE
+from pydalle.functional.types import HttpRequest
 
 
 def request_access_token(client_id, code, code_verifier, domain, redirect_uri):

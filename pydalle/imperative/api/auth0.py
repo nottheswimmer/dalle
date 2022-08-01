@@ -1,7 +1,7 @@
-from dalle.functional.api.flow.auth0 import get_access_token_flow
-from dalle.functional.api.request.auth0 import urlsafe_b64encode_string
-from dalle.imperative.outside.internet import session_flow, session_flow_async
-from dalle.imperative.outside.sysrand import secure_random_choice
+from pydalle.functional.api.flow.auth0 import get_access_token_flow
+from pydalle.functional.api.request.auth0 import urlsafe_b64encode_string
+from pydalle.imperative.outside.internet import session_flow, session_flow_async
+from pydalle.imperative.outside.sysrand import secure_random_choice
 
 
 def get_access_token(username: str, password: str, domain: str, client_id: str,

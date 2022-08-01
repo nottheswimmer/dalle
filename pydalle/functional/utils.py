@@ -1,7 +1,7 @@
 from typing import Optional
 from urllib.parse import parse_qs, urlparse
 
-from dalle.functional.types import HttpResponse, JsonDict, FlowError
+from pydalle.functional.types import HttpResponse, JsonDict, FlowError
 
 
 def get_query_param(url: str, param: str) -> str:

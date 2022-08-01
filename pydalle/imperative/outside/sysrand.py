@@ -1,6 +1,6 @@
 import secrets
 
-from dalle.functional.types import SupportsLenAndGetItem, T
+from pydalle.functional.types import SupportsLenAndGetItem, T
 
 
 def secure_random_choice(seq: SupportsLenAndGetItem[T]) -> T:

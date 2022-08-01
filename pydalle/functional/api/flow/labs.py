@@ -1,9 +1,9 @@
 from typing import Optional
 
-from dalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, get_task_request
-from dalle.functional.api.response.labs import TaskList, TaskType, Task
-from dalle.functional.types import HttpFlow, FlowError, JsonDict
-from dalle.functional.utils import send_from, try_json
+from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, get_task_request
+from pydalle.functional.api.response.labs import TaskList, TaskType, Task
+from pydalle.functional.types import HttpFlow, FlowError, JsonDict
+from pydalle.functional.utils import send_from, try_json
 
 DEFAULT_INTERVAL = 1.0
 

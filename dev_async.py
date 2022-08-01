@@ -2,7 +2,7 @@ import os
 import asyncio
 import platform
 
-from dalle.imperative.api.labs import get_bearer_token_async, get_tasks_async, poll_for_task_completion_async, \
+from pydalle.imperative.api.labs import get_bearer_token_async, get_tasks_async, poll_for_task_completion_async, \
     create_text2im_task_async, create_variations_task_async
 
 if platform.system() == 'Windows':

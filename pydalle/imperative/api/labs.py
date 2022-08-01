@@ -1,12 +1,12 @@
 from typing import Optional
 
-from dalle.functional.api.response.labs import TaskList, Task
-from dalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
+from pydalle.functional.api.response.labs import TaskList, Task
+from pydalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
     OPENAI_AUTH0_AUDIENCE, OPENAI_LABS_REDIRECT_URI, OPENAI_AUTH0_SCOPE
-from dalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
+from pydalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
     create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, create_inpainting_task_flow
-from dalle.imperative.api.auth0 import get_access_token, get_access_token_async
-from dalle.imperative.outside.internet import session_flow, session_flow_async
+from pydalle.imperative.api.auth0 import get_access_token, get_access_token_async
+from pydalle.imperative.outside.internet import session_flow, session_flow_async
 
 _LABS_AUTH0_PARAMS = {
     "domain": OPENAI_AUTH0_DOMAIN,
