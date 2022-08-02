@@ -68,9 +68,11 @@ See the following files for examples:
 While not dependencies of this library, the following tools are useful companions when working with images:
 
 - PIL: `pip install Pillow`
-    - Displaying an image in a notebook
-    - Saving images to disk
+    - Displaying an image in a notebook or in a Python script
+    - Adding an alpha channel to an image (for creating masks)
+    - Converting an image to PNG format (for uploading to DALL·E 2)
     - Resizing, cropping, padding, and masking images (etc.)
+    - Saving images to disk
 - matplotlib: `pip install matplotlib`
     - Arranging images in a grid for display
 - numpy: `pip install numpy`
