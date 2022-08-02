@@ -21,10 +21,6 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
 
     pip install aiohttp
 
-While not required, the PIL library is also recommended for image processing.
-
-    pip install Pillow
-
 ## Tips
 
 - Get access by signing up for the [DALL·E 2 waitlist][1].
@@ -67,6 +63,23 @@ See the following files for examples:
 - [dev.py](./dev.py) - Example of using the library in a python script
 - [dev_async.py](./dev_async.py) - Example of using the library in a python script using asyncio
 
+## Useful tools
+
+While not dependencies of this library, the following tools are useful companions when working with images:
+
+- PIL: `pip install Pillow`
+    - Displaying an image in a notebook
+    - Saving images to disk
+    - Resizing, cropping, padding, and masking images (etc.)
+- matplotlib: `pip install matplotlib`
+    - Arranging images in a grid for display
+- numpy: `pip install numpy`
+    - Vectorization of image processing operations
+      (if you find yourself doing a lot of slow loops over pixels, try putting the image in a numpy array and
+      vectorizing the loops)
+
 [1]: https://labs.openai.com/waitlist
+
 [2]: https://labs.openai.com/policies/content-policy
+
 [3]: https://labs.openai.com/policies/terms
