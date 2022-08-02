@@ -27,7 +27,9 @@ While not required, the PIL library is also recommended for image processing.
 
 ## Tips
 
-- Ensure your usage of DALL·E 2 abides by DALL·E 2's [content policy][1] and [terms of use][2].
+- Get access by signing up for the [DALL·E 2 wait list][1].
+
+- Ensure your usage of DALL·E 2 abides by DALL·E 2's [content policy][2] and [terms of use][3].
 
 - Be mindful about how easy this library makes it for you to spend your money / DALL·E 2 credits.
 
@@ -65,5 +67,6 @@ See the following files for examples:
 - [dev.py](./dev.py) - Example of using the library in a python script
 - [dev_async.py](./dev_async.py) - Example of using the library in a python script using asyncio
 
-[1]: https://labs.openai.com/policies/content-policy
-[2]: https://labs.openai.com/policies/terms
+[1]: https://labs.openai.com/waitlist
+[2]: https://labs.openai.com/policies/content-policy
+[3]: https://labs.openai.com/policies/terms
