@@ -27,13 +27,9 @@ While not required, the PIL library is also recommended for image processing.
 
 ## Tips
 
-- Ensure your usage of DALL·E 2 abides by DALL·E 2's [content policy][1].
+- Ensure your usage of DALL·E 2 abides by DALL·E 2's [content policy][1] and [terms of use][2].
 
 - Be mindful about how easy this library makes it for you to spend your money / DALL·E 2 credits.
-
-- The primary benefit of our library over [ezzcodeezzlife/dalle2-in-python][2]
-  is that you do not need to manually paste in a session token and can just provide your username and password.
-  For a few people, our optional asyncio support might also be a plus.
 
 ## Features
 
@@ -70,5 +66,4 @@ See the following files for examples:
 - [dev_async.py](./dev_async.py) - Example of using the library in a python script using asyncio
 
 [1]: https://labs.openai.com/policies/content-policy
-[2]: https://github.com/ezzcodeezzlife/dalle2-in-python
-[requests]: https://requests.readthedocs.io/en/master/
+[2]: https://labs.openai.com/policies/terms
