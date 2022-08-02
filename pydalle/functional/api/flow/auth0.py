@@ -1,6 +1,6 @@
 from pydalle.functional.api.request.auth0 import request_access_token, request_provide_username_password, \
     request_provide_username, request_authorization_code
-from pydalle.functional.types import HttpFlow, FlowError
+from pydalle.functional.types import HttpFlow, FlowError, HttpResponse
 from pydalle.functional.utils import get_query_param, send_from
 
 
@@ -25,7 +25,7 @@ def get_access_token_response_flow(
         code_verifier: str,
         initial_state: str,
         nonce: str,
-) -> HttpFlow[str]:
+) -> HttpFlow[HttpResponse]:
     """
     https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow
     """
