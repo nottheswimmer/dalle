@@ -27,7 +27,7 @@ While not required, the PIL library is also recommended for image processing.
 
 ## Tips
 
-- Get access by signing up for the [DALL·E 2 wait list][1].
+- Get access by signing up for the [DALL·E 2 waitlist][1].
 
 - Ensure your usage of DALL·E 2 abides by DALL·E 2's [content policy][2] and [terms of use][3].
 
