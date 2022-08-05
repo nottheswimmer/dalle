@@ -2,6 +2,8 @@ import json
 from dataclasses import dataclass
 from typing import List, Optional, Literal, Union
 
+from pydalle.functional.assumptions import OPENAI_LABS_SHARE_URL_TEMPLATE
+
 
 @dataclass
 class TaskList:
@@ -143,6 +145,11 @@ class Generation:
                    prompt_id=d["prompt_id"],
                    is_public=d["is_public"])
 
+    @property
+    def share_url(self):
+        # The generation must be public for the share url to be available
+        return OPENAI_LABS_SHARE_URL_TEMPLATE % (self.id.replace("generation-", "", 1))
+
 
 @dataclass
 class GenerationData:
@@ -151,3 +158,24 @@ class GenerationData:
     @classmethod
     def from_dict(cls, d: dict) -> 'GenerationData':
         return cls(image_path=d["image_path"])
+
+
+@dataclass
+class Collection:
+    object: Literal["collection"]
+    id: str
+    created: int
+    name: str
+    description: str
+    is_public: bool
+    alias: str
+
+    @classmethod
+    def from_dict(cls, d: dict) -> 'Collection':
+        return cls(object=d["object"],
+                   id=d["id"],
+                   created=d["created"],
+                   name=d["name"],
+                   description=d["description"],
+                   is_public=d["is_public"],
+                   alias=d["alias"])

@@ -6,7 +6,7 @@ import base64
 from PIL import Image
 
 from pydalle.imperative.api.labs import get_bearer_token, get_tasks, create_text2im_task, poll_for_task_completion, \
-    create_variations_task, create_inpainting_task, download_generation
+    create_variations_task, create_inpainting_task, download_generation, share_generation, save_generations
 
 OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')
 OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
@@ -21,6 +21,14 @@ def main():
     tasks = get_tasks(token)
     for task in tasks.data:
         print(task)
+        download_and_show(task, token)
+        if input("Do you want to share this generation? (y/n): ") == "y":
+            r = share_generation(token, task.generations.data[0].id)
+            print(f"Share URL: {r.share_url}")
+        if input("Do you want to save this generation? (y/n): ") == "y":
+            r = save_generations(token, [task.generations.data[0].id])
+            print(f"Saved to collection {r.name} ({r.alias})")
+        break
     print()
 
     print("Attempting to create text2im task...")

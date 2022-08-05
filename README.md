@@ -40,6 +40,10 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
 - `poll_for_task_completion /` `poll_for_task_completion_async`: Poll for a task until it is complete
 - `download_generation` / `download_generation_async`: Download the image bytes for a given generation ID
   (the generation also has an image_path field, but it does not include the necessary watermark so use this instead)
+- `share_generation` / `share_generation_async`: Make the generation with the given ID public. The share_url property on the returned object 
+   will include the share link for this image
+- `save_generations / save_generations_async`: Save the generations with the given generation IDs to your collection. Returns a
+    Collection object for the collection saved to.
 
 ## Image input
 
