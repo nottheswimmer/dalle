@@ -2,14 +2,17 @@ from typing import Optional, List
 
 from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, \
     get_task_request, download_generation_request, save_generations_request, share_generation_request
-from pydalle.functional.api.response.labs import TaskList, TaskType, Task, Generation, Collection
+from pydalle.functional.api.response.labs import TaskList, TaskType, Task, Generation, Collection, Login
 from pydalle.functional.types import HttpFlow, FlowError, JsonDict
 from pydalle.functional.utils import send_from, try_json
 
 DEFAULT_INTERVAL = 1.0
 
 
-def get_bearer_token_json_flow(access_token: str) -> HttpFlow[JsonDict]:
+def get_login_info_json_flow(access_token: str) -> HttpFlow[JsonDict]:
+    if access_token.startswith("sess-"):
+        raise FlowError("Invalid access token: It appears you've passed in a session "
+                        "token instead of the expected access token")
     r = yield login_request(access_token)
     while r.status_code == 504:
         r = yield login_request(access_token, sleep=DEFAULT_INTERVAL)
@@ -23,7 +26,18 @@ def get_bearer_token_flow(access_token: str) -> HttpFlow[str]:
         except Exception as e:
             raise FlowError("Failed to get bearer token from response", response) from e
 
-    return send_from(get_bearer_token_json_flow(access_token), fn)
+    return send_from(get_login_info_json_flow(access_token), fn)
+
+
+def get_login_info_flow(access_token: str) -> HttpFlow[Login]:
+    def fn(response):
+        try:
+            return Login.from_dict(response)
+        except Exception as e:
+            raise FlowError("Failed to parse response", response) from e
+
+    return send_from(get_login_info_json_flow(access_token), fn)
+
 
 
 def get_tasks_flow(bearer_token: str, from_ts: Optional[int] = None) -> HttpFlow[TaskList]:

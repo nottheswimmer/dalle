@@ -6,7 +6,8 @@ import base64
 from PIL import Image
 
 from pydalle.imperative.api.labs import get_bearer_token, get_tasks, create_text2im_task, poll_for_task_completion, \
-    create_variations_task, create_inpainting_task, download_generation, share_generation, save_generations
+    create_variations_task, create_inpainting_task, download_generation, share_generation, save_generations, \
+    get_access_token, get_bearer_token_from_access_token, get_login_info
 
 OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')
 OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
@@ -14,8 +15,17 @@ OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
 
 def main():
     print("Attempting to get token for DALL·E...")
-    token = get_bearer_token(OPENAI_USERNAME, OPENAI_PASSWORD)
+
+    # If you just want the bearer token, do this:
+    # token = get_bearer_token(OPENAI_USERNAME, OPENAI_PASSWORD)
+
+    # Slightly more involved if you also want to use methods that need the access token:
+    access_token = get_access_token(OPENAI_USERNAME, OPENAI_PASSWORD)
+    token = get_bearer_token_from_access_token(access_token)
     print("Token:", token)
+    print("Also printing credits using that access token...")
+    login_info = get_login_info(access_token)
+    print(f"{login_info.billing_info.aggregate_credits} credits remaining...")
 
     print("Attempting to check tasks...")
     tasks = get_tasks(token)

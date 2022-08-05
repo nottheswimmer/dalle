@@ -1,12 +1,13 @@
 from typing import Optional, Dict, List
 
-from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection
+from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection, Login
 from pydalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
     OPENAI_AUTH0_AUDIENCE, OPENAI_LABS_REDIRECT_URI, OPENAI_AUTH0_SCOPE
 from pydalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
     create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, \
-    create_inpainting_task_flow, download_generation_flow, share_generation_flow, save_generations_flow
-from pydalle.imperative.api.auth0 import get_access_token, get_access_token_async
+    create_inpainting_task_flow, download_generation_flow, share_generation_flow, save_generations_flow, \
+    get_login_info_flow
+from pydalle.imperative.api.auth0 import get_access_token_from_credentials, get_access_token_from_credentials_async
 from pydalle.imperative.outside.internet import session_flow, session_flow_async
 
 _LABS_AUTH0_PARAMS = {
@@ -18,13 +19,38 @@ _LABS_AUTH0_PARAMS = {
 }
 
 
+def get_access_token(username: str, password: str, headers: Optional[Dict[str, str]] = None) -> str:
+    return get_access_token_from_credentials(username, password, **_LABS_AUTH0_PARAMS, headers=headers)
+
+
+async def get_access_token_async(username: str, password: str,
+                                                  headers: Optional[Dict[str, str]] = None) -> str:
+    return await get_access_token_from_credentials_async(username, password, **_LABS_AUTH0_PARAMS, headers=headers)
+
+
 def get_bearer_token(username: str, password: str, headers: Optional[Dict[str, str]] = None) -> str:
-    access_token = get_access_token(username, password, **_LABS_AUTH0_PARAMS, headers=headers)
+    access_token = get_access_token_from_credentials(username, password, **_LABS_AUTH0_PARAMS, headers=headers)
     return session_flow(get_bearer_token_flow, headers, access_token=access_token)
 
 
 async def get_bearer_token_async(username: str, password: str, headers: Optional[Dict[str, str]] = None) -> str:
-    access_token = (await get_access_token_async(username, password, **_LABS_AUTH0_PARAMS, headers=headers))
+    access_token = (await get_access_token_from_credentials_async(username, password, **_LABS_AUTH0_PARAMS, headers=headers))
+    return await session_flow_async(get_bearer_token_flow, headers, access_token=access_token)
+
+
+def get_login_info(access_token: str, headers: Optional[Dict[str, str]] = None) -> Login:
+    return session_flow(get_login_info_flow, headers, access_token=access_token)
+
+
+async def get_login_info_async(access_token: str, headers: Optional[Dict[str, str]] = None) -> Login:
+    return await session_flow_async(get_login_info_flow, headers, access_token=access_token)
+
+
+def get_bearer_token_from_access_token(access_token: str, headers: Optional[Dict[str, str]] = None) -> str:
+    return session_flow(get_bearer_token_flow, headers, access_token=access_token)
+
+
+async def get_bearer_token_from_access_token_async(access_token: str, headers: Optional[Dict[str, str]] = None) -> str:
     return await session_flow_async(get_bearer_token_flow, headers, access_token=access_token)
 
 

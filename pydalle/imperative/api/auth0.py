@@ -6,8 +6,8 @@ from pydalle.imperative.outside.internet import session_flow, session_flow_async
 from pydalle.imperative.outside.sysrand import secure_random_choice
 
 
-def get_access_token(username: str, password: str, domain: str, client_id: str,
-                     audience: str, redirect_uri: str, scope: str, headers: Optional[Dict[str, str]] = None) -> str:
+def get_access_token_from_credentials(username: str, password: str, domain: str, client_id: str,
+                                      audience: str, redirect_uri: str, scope: str, headers: Optional[Dict[str, str]] = None) -> str:
     return session_flow(get_access_token_flow, headers,
                         username=username, password=password, domain=domain,
                         client_id=client_id, audience=audience,
@@ -17,7 +17,7 @@ def get_access_token(username: str, password: str, domain: str, client_id: str,
                         nonce=_random_secure_urlsafe_b64encoded_string())
 
 
-async def get_access_token_async(username: str, password: str, domain: str, client_id: str,
+async def get_access_token_from_credentials_async(username: str, password: str, domain: str, client_id: str,
                                  audience: str, redirect_uri: str, scope: str,
                                  headers: Optional[Dict[str, str]] = None) -> str:
     return await session_flow_async(get_access_token_flow, headers,
