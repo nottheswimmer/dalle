@@ -1,12 +1,12 @@
 from typing import Optional, Dict, List
 
-from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection, Login, UserFlag
+from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection, Login, UserFlag, BillingInfo
 from pydalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
     OPENAI_AUTH0_AUDIENCE, OPENAI_LABS_REDIRECT_URI, OPENAI_AUTH0_SCOPE
 from pydalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
     create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, \
     create_inpainting_task_flow, download_generation_flow, share_generation_flow, save_generations_flow, \
-    get_login_info_flow, flag_generation_flow
+    get_login_info_flow, flag_generation_flow, get_credit_summary_flow
 from pydalle.imperative.api.auth0 import get_access_token_from_credentials, get_access_token_from_credentials_async
 from pydalle.imperative.outside.internet import session_flow, session_flow_async
 
@@ -184,3 +184,11 @@ def flag_generation_unexpected(bearer_token: str, generation_id: str,
 async def flag_generation_unexpected_async(bearer_token: str, generation_id: str,
                                            headers: Optional[Dict[str, str]] = None) -> UserFlag:
     return await _flag_generation_async(bearer_token, generation_id, "Unexpected", headers)
+
+
+def get_credit_summary(bearer_token: str, headers: Optional[Dict[str, str]] = None) -> BillingInfo:
+    return session_flow(get_credit_summary_flow, headers, bearer_token=bearer_token)
+
+
+async def get_credit_summary_async(bearer_token: str, headers: Optional[Dict[str, str]] = None) -> BillingInfo:
+    return await session_flow_async(get_credit_summary_flow, headers, bearer_token=bearer_token)

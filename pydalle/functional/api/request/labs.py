@@ -5,7 +5,7 @@ from pydalle.functional.api.response.labs import TaskType
 from pydalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, \
     OPENAI_LABS_TASK_URL_TEMPLATE, OPENAI_LABS_GENERATION_DOWNLOAD_URL_TEMPLATE, \
     OPENAI_LABS_GENERATION_SHARE_URL_TEMPLATE, OPENAI_LABS_COLLECTION_GENERATION_URL_TEMPLATE, \
-    OPENAI_LABS_GENERATION_FLAG_URL_TEMPLATE
+    OPENAI_LABS_GENERATION_FLAG_URL_TEMPLATE, OPENAI_LABS_BILLING_CREDIT_SUMMARY_URL
 from pydalle.functional.types import HttpRequest
 from pydalle.functional.utils import filter_none
 
@@ -85,6 +85,13 @@ def flag_generation_request(bearer_token: str, generation_id: str, description: 
                        data=json.dumps({"description": description}),
                        headers={"Authorization": f"Bearer {bearer_token}",
                                 "Content-Type": "application/json"},
+                       sleep=sleep)
+
+
+def get_credit_summary_request(bearer_token: str, sleep: Optional[float] = None) -> HttpRequest:
+    return HttpRequest(method="get",
+                       url=OPENAI_LABS_BILLING_CREDIT_SUMMARY_URL,
+                       headers={"Authorization": f"Bearer {bearer_token}"},
                        sleep=sleep)
 
 

@@ -32,10 +32,6 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
 ## Features
 
 - `get_bearer_token` / `get_bearer_token_async`: Get a bearer token from username and password (discards access token)
-- `get_access_token` / `get_access_token_async`: Get an access token from username and password. Only needed for the following:
-  - `get_bearer_token_with_access_token` / `get_bearer_token_with_access_token_async`: Get a bearer token from an access token.
-  - `get_login_info` / `get_login_info_async`: Get information for the user (which includes the bearer token). 
-     Good for checking how many credits are remaining, etc.
 - `get_task` / `get_task_async`: Get a task by ID
 - `get_tasks` / `get_tasks_async`: Get tasks created after a given timestamp
 - `create_text2im_task` / `create_text2im_task_async`: Create a task to generate an image from a text
@@ -52,6 +48,10 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
     UserFlag object with details about the flag.
 - `flag_generation_unexpected / flag_generation_unexpected_async`: Flag a generation as unexpected. Returns a
     UserFlag object with details about the flag.
+- `get_credit_summary / get_credit_summary_async`: Get a summary of your DALL·E 2 billing information.
+- `get_access_token` / `get_access_token_async`: Get an access token from username and password. Only needed for the following:
+  - `get_bearer_token_with_access_token` / `get_bearer_token_with_access_token_async`: Get a bearer token from an access token.
+  - `get_login_info` / `get_login_info_async`: Get information for the user (which includes the bearer token).
 
 ## Image input
 

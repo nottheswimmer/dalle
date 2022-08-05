@@ -7,7 +7,7 @@ from PIL import Image
 
 from pydalle.imperative.api.labs import get_bearer_token, get_tasks, create_text2im_task, poll_for_task_completion, \
     create_variations_task, create_inpainting_task, download_generation, share_generation, save_generations, \
-    get_access_token, get_bearer_token_from_access_token, get_login_info
+    get_access_token, get_bearer_token_from_access_token, get_login_info, get_credit_summary
 
 OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')
 OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
@@ -25,7 +25,12 @@ def main():
     print("Token:", token)
     print("Also printing credits using that access token...")
     login_info = get_login_info(access_token)
-    print(f"{login_info.billing_info.aggregate_credits} credits remaining...")
+    remaining_credits = login_info.billing_info.aggregate_credits
+    print(f"{remaining_credits} credits remaining...")
+
+    # But, actually, you can just use the credit summary method with the bearer token now:
+    credit_summary = get_credit_summary(token)
+    print(f"SAME THING: {credit_summary.aggregate_credits} credits remaining...")
 
     print("Attempting to check tasks...")
     tasks = get_tasks(token)
