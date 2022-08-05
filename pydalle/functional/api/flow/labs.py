@@ -13,7 +13,7 @@ DEFAULT_INTERVAL = 1.0
 
 def get_login_info_json_flow(access_token: str) -> HttpFlow[JsonDict]:
     if access_token.startswith("sess-"):
-        raise FlowError("Invalid access token: It appears you've passed in a session "
+        raise ValueError("Invalid access token: It appears you've passed in a session "
                         "token instead of the expected access token")
     r = yield login_request(access_token)
     while r.status_code == 504:
