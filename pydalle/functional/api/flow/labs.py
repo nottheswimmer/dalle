@@ -1,6 +1,7 @@
 from typing import Optional
 
-from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, get_task_request
+from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, \
+    get_task_request, download_generation_request
 from pydalle.functional.api.response.labs import TaskList, TaskType, Task
 from pydalle.functional.types import HttpFlow, FlowError, JsonDict
 from pydalle.functional.utils import send_from, try_json
@@ -107,3 +108,12 @@ def poll_for_task_completion_flow(bearer_token: str,
                     raise FlowError("Failed to parse response", r) from e
         r = yield get_task_request(bearer_token, task_id=task_id, sleep=interval)
     raise FlowError("Failed to poll for task completion: Reached max attempts", r)
+
+
+def download_generation_flow(bearer_token: str, generation_id: str) -> HttpFlow[bytes]:
+    r = yield download_generation_request(bearer_token, generation_id)
+    while r.status_code == 504:
+        r = yield download_generation_request(bearer_token, generation_id, sleep=DEFAULT_INTERVAL)
+    if r.status_code != 200:
+        raise FlowError("Failed to download generation", r)
+    return r.content

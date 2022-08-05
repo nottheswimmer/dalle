@@ -38,6 +38,8 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
 - `create_variations_task` / `create_variations_task_async`: Create a task to generate variations of an image
 - `create_inpainting_task` / `create_inpainting_task_async`: Create a task to generate an image from a mask and caption
 - `poll_for_task_completion /` `poll_for_task_completion_async`: Poll for a task until it is complete
+- `download_generation` / `download_generation_async`: Download the image bytes for a given generation ID
+  (the generation also has an image_path field, but it does not include the necessary watermark so use this instead)
 
 ## Image input
 

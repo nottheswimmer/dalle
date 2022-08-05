@@ -4,7 +4,8 @@ from pydalle.functional.api.response.labs import TaskList, Task
 from pydalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
     OPENAI_AUTH0_AUDIENCE, OPENAI_LABS_REDIRECT_URI, OPENAI_AUTH0_SCOPE
 from pydalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
-    create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, create_inpainting_task_flow
+    create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, \
+    create_inpainting_task_flow, download_generation_flow
 from pydalle.imperative.api.auth0 import get_access_token, get_access_token_async
 from pydalle.imperative.outside.internet import session_flow, session_flow_async
 
@@ -93,3 +94,11 @@ async def poll_for_task_completion_async(bearer_token: str, task_id: str, interv
                                          headers: Optional[Dict[str, str]] = None) -> Task:
     return await session_flow_async(poll_for_task_completion_flow, headers, task_id=task_id, bearer_token=bearer_token,
                                     interval=interval)
+
+
+def download_generation(bearer_token: str, generation_id: str, headers: Optional[Dict[str, str]] = None) -> bytes:
+    return session_flow(download_generation_flow, headers, generation_id=generation_id, bearer_token=bearer_token)
+
+
+async def download_generation_async(bearer_token: str, task_id: str, headers: Optional[Dict[str, str]] = None) -> bytes:
+    return await session_flow_async(download_generation_flow, headers, task_id=task_id, bearer_token=bearer_token)

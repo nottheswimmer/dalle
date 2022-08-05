@@ -22,6 +22,7 @@ class HttpRequest:
     headers: Optional[Dict[str, str]] = None
     data: Optional[str] = None
     sleep: Optional[float] = None
+    decode: bool = True
 
 
 _CENSORED_REQUEST_KEYS = {"authorization", "password", "code", "code_verifier"}
@@ -31,11 +32,11 @@ _CENSORED_REQUEST_KEYS = {"authorization", "password", "code", "code_verifier"}
 class HttpResponse:
     status_code: int
     url: str
-    text: str
+    content: Union[str, bytes]
     request: HttpRequest
 
     def json(self, **kwargs) -> 'JsonValue':
-        return json.loads(self.text, **kwargs)
+        return json.loads(self.content, **kwargs)
 
     def censor_request(self):
         """

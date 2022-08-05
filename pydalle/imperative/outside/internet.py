@@ -68,10 +68,15 @@ async def request_async(r: HttpRequest, /, session: Optional['aiohttp.ClientSess
 
 
 def _requests_response_to_http_response(response: 'requests.Response', http_request: HttpRequest) -> HttpResponse:
-    return HttpResponse(status_code=response.status_code, text=response.text, url=response.url, request=http_request)
+    return HttpResponse(status_code=response.status_code,
+                        content=response.text if http_request.decode else response.content,
+                        url=response.url, request=http_request)
 
 
 async def _aiohttp_response_to_http_response(response: 'aiohttp.ClientResponse',
                                              http_request: HttpRequest) -> HttpResponse:
-    return HttpResponse(status_code=response.status, text=await response.text(), url=str(response.url),
-                        request=http_request)
+    return HttpResponse(
+        status_code=response.status,
+        content=(await response.text()) if http_request.decode else (await response.read()),
+        url=str(response.url),
+        request=http_request)

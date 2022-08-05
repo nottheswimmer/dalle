@@ -1,12 +1,12 @@
+import io
 import os
 from io import BytesIO
-from urllib.request import urlopen
 
 import base64
 from PIL import Image
 
 from pydalle.imperative.api.labs import get_bearer_token, get_tasks, create_text2im_task, poll_for_task_completion, \
-    create_variations_task, create_inpainting_task
+    create_variations_task, create_inpainting_task, download_generation
 
 OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')
 OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
@@ -29,7 +29,7 @@ def main():
     print()
 
     task = wait_for_task(pending_task, token)
-    download_and_show(task)
+    download_and_show(task, token)
 
     print("Attempting to create variations task...")
     pending_task = create_variations_task(token, task.generations[0].id)
@@ -37,7 +37,7 @@ def main():
     print()
 
     task = wait_for_task(pending_task, token)
-    image = download_and_show(task)
+    image = download_and_show(task, token)
 
     print("Attempting to create inpainting task and showing the mask...")
     # Make the right-side of the image transparent
@@ -60,7 +60,7 @@ def main():
 
     task = wait_for_task(pending_task, token)
 
-    download_and_show(task)
+    download_and_show(task, token)
 
 
 def wait_for_task(pending_task, token):
@@ -71,11 +71,9 @@ def wait_for_task(pending_task, token):
     return task
 
 
-def download_and_show(task):
+def download_and_show(task, token):
     print("Attempting to download first generated image and show...")
-    image_path = task.generations[0].generation.image_path
-    print("Image path:", image_path)
-    image = Image.open(urlopen(image_path))
+    image = Image.open(io.BytesIO(download_generation(token, task.generations.data[0].id)))
     image.show("generated image")
     print()
     return image

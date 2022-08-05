@@ -2,7 +2,8 @@ import json
 from typing import Optional
 
 from pydalle.functional.api.response.labs import TaskType
-from pydalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, OPENAI_LABS_TASK_URL_TEMPLATE
+from pydalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, \
+    OPENAI_LABS_TASK_URL_TEMPLATE, OPENAI_LABS_GENERATION_DOWNLOAD_URL_TEMPLATE
 from pydalle.functional.types import HttpRequest
 from pydalle.functional.utils import filter_none
 
@@ -47,6 +48,14 @@ def create_task_request(bearer_token: str,
                        ),
                        headers={"Authorization": f"Bearer {bearer_token}",
                                 "Content-Type": "application/json"},
+                       sleep=sleep)
+
+
+def download_generation_request(bearer_token: str, generation_id: str, sleep: Optional[float] = None) -> HttpRequest:
+    return HttpRequest(method="get",
+                       url=OPENAI_LABS_GENERATION_DOWNLOAD_URL_TEMPLATE % generation_id,
+                       headers={"Authorization": f"Bearer {bearer_token}"},
+                       decode=False,
                        sleep=sleep)
 
 
