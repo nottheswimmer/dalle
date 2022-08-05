@@ -4,7 +4,8 @@ from typing import Optional, List
 from pydalle.functional.api.response.labs import TaskType
 from pydalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, \
     OPENAI_LABS_TASK_URL_TEMPLATE, OPENAI_LABS_GENERATION_DOWNLOAD_URL_TEMPLATE, \
-    OPENAI_LABS_GENERATION_SHARE_URL_TEMPLATE, OPENAI_LABS_COLLECTION_GENERATION_URL_TEMPLATE
+    OPENAI_LABS_GENERATION_SHARE_URL_TEMPLATE, OPENAI_LABS_COLLECTION_GENERATION_URL_TEMPLATE, \
+    OPENAI_LABS_GENERATION_FLAG_URL_TEMPLATE
 from pydalle.functional.types import HttpRequest
 from pydalle.functional.utils import filter_none
 
@@ -72,6 +73,16 @@ def save_generations_request(bearer_token: str, generation_ids: List[str], colle
     return HttpRequest(method="post",
                        url=OPENAI_LABS_COLLECTION_GENERATION_URL_TEMPLATE % collection_id_or_alias,
                        data=json.dumps({"generation_ids": generation_ids}),
+                       headers={"Authorization": f"Bearer {bearer_token}",
+                                "Content-Type": "application/json"},
+                       sleep=sleep)
+
+
+def flag_generation_request(bearer_token: str, generation_id: str, description: str,
+                            sleep: Optional[float] = None) -> HttpRequest:
+    return HttpRequest(method="post",
+                       url=OPENAI_LABS_GENERATION_FLAG_URL_TEMPLATE % generation_id,
+                       data=json.dumps({"description": description}),
                        headers={"Authorization": f"Bearer {bearer_token}",
                                 "Content-Type": "application/json"},
                        sleep=sleep)

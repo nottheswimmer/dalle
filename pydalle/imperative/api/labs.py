@@ -1,12 +1,12 @@
 from typing import Optional, Dict, List
 
-from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection, Login
+from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection, Login, UserFlag
 from pydalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLIENT_ID, \
     OPENAI_AUTH0_AUDIENCE, OPENAI_LABS_REDIRECT_URI, OPENAI_AUTH0_SCOPE
 from pydalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
     create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, \
     create_inpainting_task_flow, download_generation_flow, share_generation_flow, save_generations_flow, \
-    get_login_info_flow
+    get_login_info_flow, flag_generation_flow
 from pydalle.imperative.api.auth0 import get_access_token_from_credentials, get_access_token_from_credentials_async
 from pydalle.imperative.outside.internet import session_flow, session_flow_async
 
@@ -24,7 +24,7 @@ def get_access_token(username: str, password: str, headers: Optional[Dict[str, s
 
 
 async def get_access_token_async(username: str, password: str,
-                                                  headers: Optional[Dict[str, str]] = None) -> str:
+                                 headers: Optional[Dict[str, str]] = None) -> str:
     return await get_access_token_from_credentials_async(username, password, **_LABS_AUTH0_PARAMS, headers=headers)
 
 
@@ -34,7 +34,8 @@ def get_bearer_token(username: str, password: str, headers: Optional[Dict[str, s
 
 
 async def get_bearer_token_async(username: str, password: str, headers: Optional[Dict[str, str]] = None) -> str:
-    access_token = (await get_access_token_from_credentials_async(username, password, **_LABS_AUTH0_PARAMS, headers=headers))
+    access_token = (
+        await get_access_token_from_credentials_async(username, password, **_LABS_AUTH0_PARAMS, headers=headers))
     return await session_flow_async(get_bearer_token_flow, headers, access_token=access_token)
 
 
@@ -151,3 +152,35 @@ async def save_generations_async(bearer_token: str, generation_ids: List[str], c
     return await session_flow_async(save_generations_flow, headers, collection_id_or_alias=collection_id_or_alias,
                                     generation_ids=generation_ids,
                                     bearer_token=bearer_token)
+
+
+def _flag_generation(bearer_token: str, generation_id: str, description: str,
+                     headers: Optional[Dict[str, str]] = None) -> UserFlag:
+    return session_flow(flag_generation_flow, headers, generation_id=generation_id, reason=description,
+                        bearer_token=bearer_token)
+
+
+async def _flag_generation_async(bearer_token: str, generation_id: str, description: str,
+                                 headers: Optional[Dict[str, str]] = None) -> UserFlag:
+    return await session_flow_async(flag_generation_flow, headers, generation_id=generation_id, reason=description,
+                                    bearer_token=bearer_token)
+
+
+def flag_generation_sensitive(bearer_token: str, generation_id: str,
+                              headers: Optional[Dict[str, str]] = None) -> UserFlag:
+    return _flag_generation(bearer_token, generation_id, "Sensitive", headers)
+
+
+async def flag_generation_sensitive_async(bearer_token: str, generation_id: str,
+                                          headers: Optional[Dict[str, str]] = None) -> UserFlag:
+    return await _flag_generation_async(bearer_token, generation_id, "Sensitive", headers)
+
+
+def flag_generation_unexpected(bearer_token: str, generation_id: str,
+                               headers: Optional[Dict[str, str]] = None) -> UserFlag:
+    return _flag_generation(bearer_token, generation_id, "Unexpected", headers)
+
+
+async def flag_generation_unexpected_async(bearer_token: str, generation_id: str,
+                                           headers: Optional[Dict[str, str]] = None) -> UserFlag:
+    return await _flag_generation_async(bearer_token, generation_id, "Unexpected", headers)

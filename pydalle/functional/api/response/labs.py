@@ -71,7 +71,7 @@ class StatusInformation:
         return cls(type=d.get("type"),
                    message=d.get("message"),
                    code=d.get("code"),
-                     raw=d)
+                   raw=d)
 
 
 @dataclass
@@ -353,4 +353,23 @@ class Login:
                    invites=d["invites"],
                    features=Features.from_dict(d["features"]),
                    billing_info=BillingInfo.from_dict(d["billing_info"]),
+                   raw=d)
+
+
+@dataclass
+class UserFlag:
+    raw: dict
+    object: Literal["user_flag"]
+    id: str
+    created: int
+    generation_id: str
+    description: str
+
+    @classmethod
+    def from_dict(cls, d: dict) -> 'UserFlag':
+        return cls(object=d["object"],
+                   id=d["id"],
+                   created=d["created"],
+                   generation_id=d["generation_id"],
+                   description=d["description"],
                    raw=d)

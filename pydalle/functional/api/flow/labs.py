@@ -1,8 +1,9 @@
 from typing import Optional, List
 
 from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, \
-    get_task_request, download_generation_request, save_generations_request, share_generation_request
-from pydalle.functional.api.response.labs import TaskList, TaskType, Task, Generation, Collection, Login
+    get_task_request, download_generation_request, save_generations_request, share_generation_request, \
+    flag_generation_request
+from pydalle.functional.api.response.labs import TaskList, TaskType, Task, Generation, Collection, Login, UserFlag
 from pydalle.functional.types import HttpFlow, FlowError, JsonDict
 from pydalle.functional.utils import send_from, try_json
 
@@ -142,6 +143,19 @@ def share_generation_flow(bearer_token: str, generation_id: str) -> HttpFlow[Gen
     j = try_json(r, status_code=200)
     try:
         return Generation.from_dict(j)
+    except Exception as e:
+        raise FlowError("Failed to parse response", r) from e
+
+
+def flag_generation_flow(bearer_token: str, generation_id: str, description: str) -> HttpFlow[UserFlag]:
+    r = yield flag_generation_request(bearer_token, generation_id, description)
+    while r.status_code == 504:
+        r = yield flag_generation_request(bearer_token, generation_id, description, sleep=DEFAULT_INTERVAL)
+    if r.status_code != 200:
+        raise FlowError("Failed to flag generation", r)
+    j = try_json(r, status_code=200)
+    try:
+        return UserFlag.from_dict(j)
     except Exception as e:
         raise FlowError("Failed to parse response", r) from e
 

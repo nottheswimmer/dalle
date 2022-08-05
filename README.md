@@ -48,6 +48,10 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
    will include the share link for this image
 - `save_generations / save_generations_async`: Save the generations with the given generation IDs to your collection. Returns a
     Collection object for the collection saved to.
+- `flag_generation_sensitive / flag_generation_sensitive_async`: Flag a generation as sensitive. Returns a
+    UserFlag object with details about the flag.
+- `flag_generation_unexpected / flag_generation_unexpected_async`: Flag a generation as unexpected. Returns a
+    UserFlag object with details about the flag.
 
 ## Image input
 
