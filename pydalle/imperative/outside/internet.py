@@ -1,3 +1,7 @@
+"""
+This module contains all functions pydalle uses to make requests to the internet.
+"""
+
 import asyncio
 import time
 from typing import Optional, Dict

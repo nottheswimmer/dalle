@@ -1,3 +1,7 @@
+"""
+This module contains functional utilities used throughout the codebase.
+"""
+
 from typing import Optional
 from urllib.parse import parse_qs, urlparse
 

@@ -1,3 +1,7 @@
+"""
+This module contains dataclasses which represent the Labs API's response objects.
+"""
+
 from dataclasses import dataclass
 from typing import List, Optional, Literal, Union, Any
 

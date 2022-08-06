@@ -1,3 +1,7 @@
+"""
+This module contains both type hints and structures used throughout the codebase.
+"""
+
 import json
 from copy import deepcopy
 from dataclasses import dataclass
@@ -38,41 +42,42 @@ class HttpResponse:
     def json(self, **kwargs) -> 'JsonValue':
         return json.loads(self.content, **kwargs)
 
-    def censor_request(self):
+    def _to_censored_response(self) -> 'HttpResponse':
         """
         Try to censor sensitive data in the request if this may be printed as part of an error message or a traceback
         """
-        self.request = deepcopy(self.request)  # Don't modify the original request
+        new = deepcopy(self)
         # Censor parameters
-        if self.request.params:
-            for param in self.request.params:
+        if new.request.params:
+            for param in new.request.params:
                 if param.lower() in _CENSORED_REQUEST_KEYS:
-                    self.request.params[param] = "***REDACTED***"
+                    new.request.params[param] = "***REDACTED***"
         # Censor headers
-        if self.request.headers:
-            for header in self.request.headers:
+        if new.request.headers:
+            for header in new.request.headers:
                 if header.lower() in _CENSORED_REQUEST_KEYS:
-                    self.request.headers[header] = "***REDACTED***"
+                    new.request.headers[header] = "***REDACTED***"
         # Censor data
-        if self.request.data:
+        if new.request.data:
             try:
                 # If it's JSON...
-                data = json.loads(self.request.data)
+                data = json.loads(new.request.data)
                 for key in data:
                     if key.lower() in _CENSORED_REQUEST_KEYS:
                         data[key] = "***REDACTED***"
-                self.request.data = json.dumps(data)
+                new.request.data = json.dumps(data)
             except json.JSONDecodeError:
                 pass
             try:
                 # If it's a query string...
-                data = parse_qs(self.request.data)
+                data = parse_qs(new.request.data)
                 for key in data:
                     if key.lower() in _CENSORED_REQUEST_KEYS:
                         data[key] = ["***REDACTED***"]
-                self.request.data = urlencode(data)
+                new.request.data = urlencode(data)
             except ValueError:
                 pass
+        return new
 
 
 HttpFlow = Generator[HttpRequest, HttpResponse, T]
@@ -82,7 +87,7 @@ HttpFlowFunc = Callable[[Any], HttpFlow[T]]
 class FlowError(Exception):
     def __init__(self, message: str, response: HttpResponse, *args: Any, censor: bool = True):
         if censor:
-            response.censor_request()
+            response = response._to_censored_response()
         super().__init__(message, response, *args)
         self.response = response
 

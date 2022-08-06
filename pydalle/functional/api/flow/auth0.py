@@ -1,3 +1,7 @@
+"""
+This module contains functions which are used handle the flow of requests to the Auth0 API.
+"""
+
 from pydalle.functional.api.request.auth0 import request_access_token, request_provide_username_password, \
     request_provide_username, request_authorization_code
 from pydalle.functional.types import HttpFlow, FlowError, HttpResponse

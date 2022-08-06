@@ -1,3 +1,7 @@
+"""
+This module contains the implementations of API calls to the labs API.
+"""
+
 from typing import Optional, Dict, List
 
 from pydalle.functional.api.response.labs import TaskList, Task, Generation, Collection, Login, UserFlag, BillingInfo

@@ -1,3 +1,6 @@
+"""
+This module contains the implementations of calls to the Auth0 API.
+"""
 from typing import Optional, Dict
 
 from pydalle.functional.api.flow.auth0 import get_access_token_flow

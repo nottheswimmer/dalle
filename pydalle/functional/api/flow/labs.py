@@ -1,3 +1,7 @@
+"""
+This module contains functions which are used handle the flow of requests to the labs API.
+"""
+
 from typing import Optional, List
 
 from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, \

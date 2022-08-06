@@ -1,3 +1,7 @@
+"""
+This module contains functions which are used to construct requests to the Auth0 API.
+"""
+
 import json
 from base64 import urlsafe_b64encode
 from hashlib import sha256

@@ -1,3 +1,7 @@
+"""
+This module contains all functions pydalle uses which depend on the system's random number generator.
+"""
+
 import secrets
 
 from pydalle.functional.types import SupportsLenAndGetItem, T

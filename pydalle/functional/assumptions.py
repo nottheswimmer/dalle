@@ -1,3 +1,8 @@
+"""
+This module contains strings about the outside world which were not parameterized
+because during development it was assumed that they wouldn't change.
+"""
+
 AUTH0_AUTHORIZE_URL_TEMPLATE = "https://%s/authorize"
 AUTH0_TOKEN_URL_TEMPLATE = "https://%s/oauth/token"
 

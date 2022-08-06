@@ -1,3 +1,7 @@
+"""
+This module contains functions which are used to construct requests to the OpenAI Labs API.
+"""
+
 import json
 from typing import Optional, List
 
