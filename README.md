@@ -9,7 +9,7 @@ This library provides basic programmatic access to the DALL·E 2 API.
 The intent of this library is to provide researchers with a means to easily layout
 results from DALL·E 2 into a jupyter notebook or similar.
 
-Read the documentation for pydalle on [readthedocs](https://pydalle.readthedocs.io/en/latest/pydalle.html).
+Read the documentation for pydalle on [readthedocs](https://pydalle.readthedocs.io/en/latest/pydalle.imperative.api.html?#module-pydalle.imperative.api.labs).
 
 ## Installation
 
