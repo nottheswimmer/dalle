@@ -174,6 +174,8 @@ def create_inpainting_task(bearer_token: str, caption: str, masked_image: str, p
     :param caption: The text to generate images for.
     :param masked_image: The base64-encoded PNG to mask.
     :param parent_id_or_image: The ID of the parent (generation ID or prompt ID) or a base64-encoded PNG
+    :param batch_size: The number of images to generate per request.
+    :param headers: Optional headers to send with the request.
     """
     return session_flow(create_inpainting_task_flow, headers, caption=caption, parent_id_or_image=parent_id_or_image,
                         masked_image=masked_image, batch_size=batch_size, bearer_token=bearer_token)
