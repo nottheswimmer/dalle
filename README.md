@@ -12,9 +12,9 @@ results from DALL·E 2 into a jupyter notebook or similar.
 pydalle has two main modes of use:
 
 - **`pydalle.Dalle`**: This is the main class of the library. It provides a user-friendly
-  interface to the DALL·E 2 API. [Read more here.][4].
+  interface to the DALL·E 2 API. [Read more here][4].
 - **`pydalle.imperative.api.labs`**: This module provides a set of lower-level functions that
-  can be used to interact with the DALL·E 2 API. [Read more here.][5].
+  can be used to interact with the DALL·E 2 API. [Read more here][5].
 
 ## Installation
 
