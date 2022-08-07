@@ -1,7 +1,17 @@
 from setuptools import setup, find_packages
 
+REPO_URL = 'https://github.com/nottheswimmer/dalle'
+REPO_BLOB_PREFIX = f'{REPO_URL}/blob/main/'
+
+
+def github_md_to_setup_md(md: str) -> str:
+    # Replace relative links with absolute links to blobs in the repo
+    md = md.replace('](./', f']({REPO_BLOB_PREFIX}')
+    return md
+
+
 with open('README.md', encoding='utf-8') as f:
-    long_description = f.read()
+    long_description = github_md_to_setup_md(f.read())
 
 setup(
     name='pydalle',
@@ -11,7 +21,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Michael Phelps',
     author_email='michaelphelps@nottheswimmer.org',
-    url='https://github.com/nottheswimmer/dalle',
+    url=REPO_URL,
     packages=find_packages(),
     license='MIT',
     classifiers=[

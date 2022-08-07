@@ -1,5 +1,7 @@
 import os
 
+from PIL import Image
+
 from pydalle import Dalle
 
 OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')
@@ -26,13 +28,11 @@ def main():
 
     print("Attempting to create inpainting task and showing the mask...")
     # Make the right-side of the image transparent
-    masked_image = first_image.convert("RGBA")
-    for i in range(masked_image.width):
-        if i > masked_image.width / 2:
-            for j in range(masked_image.height):
-                masked_image.putpixel((i, j), (0, 0, 0, 0))
-    masked_image.show("inpainting mask")
-    completed_inpainting_task = first_generation.inpainting("A cute cat, with a dark side", masked_image)
+    mask = first_image.convert("RGBA")
+    # Make the right-side of the image transparent by pasting over the right side of the image with a transparent image
+    mask.paste(Image.new('RGBA', (mask.width, mask.height), (0, 0, 0, 0)), (mask.width // 2, 0))
+    mask.show("inpainting mask")
+    completed_inpainting_task = first_generation.inpainting("A cute cat, with a dark side", mask)
     for image in completed_inpainting_task.download():
         image.to_pil().show()
 
