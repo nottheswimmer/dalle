@@ -86,9 +86,10 @@ if __name__ == '__main__':
     main()
 ```
 
-For an equivalent async code example, see [examples/dev_async.py](./examples/dev_async.py).
+For an equivalent async code example, see [examples/dev_client_async.py](./examples/dev_client_async.py).
 
-For examples of the low-level API and using this in a notebook, see the [examples](./examples) directory.
+For examples of the low-level API and using this in a notebook, see 
+  the [examples/low_level](./examples/low_level) directory.
 
 [1]: https://labs.openai.com/waitlist
 
