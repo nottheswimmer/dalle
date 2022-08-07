@@ -8,8 +8,9 @@ from pydalle.functional.api.response.labs import TaskList, Task, Generation, Col
 from pydalle.functional.types import HttpRequest, T
 from pydalle.imperative.outside import files
 from pydalle.imperative.outside.internet import request, request_async
-from pydalle.imperative.outside.pil import PILImage, pil_image_to_png_bytes, image_bytes_to_png_bytes, \
-    bytes_to_pil_image
+from pydalle.imperative.outside.pil import PILImageType, pil_image_to_png_bytes, image_bytes_to_png_bytes, \
+    bytes_to_pil_image, bytes_to_masked_pil_image, bytes_to_padded_pil_image
+from pydalle.imperative.outside.np import ndarray, pil_image_to_np_array, np_array_to_pil_image
 
 if TYPE_CHECKING:
     from pydalle.imperative.client.dalle import Dalle
@@ -263,13 +264,50 @@ class WrappedImage(WrappedResponse):
             return self.wrapped
         return image_bytes_to_png_bytes(self.wrapped)
 
-    def to_pil(self) -> PILImage:
+    def to_pil(self) -> PILImageType:
+        """
+        Returns a PIL image object for the image.
+
+        :return: A PIL image object.
+        """
         return bytes_to_pil_image(bytes(self))
+
+    def to_numpy(self) -> ndarray:
+        """
+        Returns a numpy array for the image.
+
+        :return: A numpy array.
+        """
+        return pil_image_to_np_array(self.to_pil())
+
+    def to_pil_masked(self, x1: float, y1: float, x2: float, y2: float) -> PILImageType:
+        """
+        Returns a PIL image object for the image, with the given mask applied.
+
+        :param x1: The percentage of the image on the left before the mask starts.
+        :param y1: The percentage of the image on the top before the mask starts.
+        :param x2: The percentage of the image on the right after the mask ends.
+        :param y2: The percentage of the image on the bottom after the mask ends.
+
+        :return: A masked PIL image object.
+        """
+        return bytes_to_masked_pil_image(bytes(self), x1, y1, x2, y2)
+
+    def to_pil_padded(self, p: float, cx: float = 0.5, cy: float = 0.5) -> PILImageType:
+        """
+        Returns a PIL image object for the image, with the given padding applied.
+
+        :param p: The percentage of the image to pad. E.g. 0.5 means the image will be shrunk by 50%.
+        :param cx: Where the newly shrunk image will be centered horizontally. Default is 0.5, the center.
+        :param cy: Where the newly shrunk image will be centered vertically. Default is 0.5, the center.
+        :return: A padded PIL image object.
+        """
+        return bytes_to_padded_pil_image(bytes(self), p, cx, cy)
 
 
 PromptLike = Union[Prompt, str]
 
-ImageLike = Union[WrappedImage, type(PILImage), bytes, str]
+ImageLike = Union[WrappedImage, PILImageType, bytes, str]
 ParentLike = Union[ImageLike, GenerationLike, PromptLike]
 
 
@@ -279,6 +317,8 @@ def _get_image_png_base64_no_io(image: ImageLike) -> str:
     if str(image.__class__).startswith("<class 'PIL."):
         # If it's a PIL image, we'll make sure it's a PNG and return the base64
         return base64.b64encode(pil_image_to_png_bytes(image)).decode()
+    if isinstance(image, ndarray):
+        return base64.b64encode(pil_image_to_png_bytes(np_array_to_pil_image(image))).decode()
     if isinstance(image, bytes):
         if image.startswith(PNG_BASE64_PREFIX):
             # If it's already a base64 encoded PNG, we just need to decode it

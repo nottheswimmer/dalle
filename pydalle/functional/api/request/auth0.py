@@ -26,7 +26,7 @@ def request_access_token(client_id, code, code_verifier, domain, redirect_uri):
     })
 
 
-def request_provide_username_password(password_url, username, password, state):
+def request_provide_username_password(password_url, username, password, state, sleep=None):
     return HttpRequest(**{
         "method": "post",
         "url": password_url,
@@ -37,7 +37,7 @@ def request_provide_username_password(password_url, username, password, state):
             "state": state,
         }),
         "headers": {"Content-Type": "application/x-www-form-urlencoded"},
-    })
+    }, sleep=sleep)
 
 
 def request_provide_username(username_url, username, state):

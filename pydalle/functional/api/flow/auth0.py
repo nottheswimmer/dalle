@@ -7,6 +7,8 @@ from pydalle.functional.api.request.auth0 import request_access_token, request_p
 from pydalle.functional.types import HttpFlow, FlowError, HttpResponse
 from pydalle.functional.utils import get_query_param, send_from
 
+DEFAULT_INTERVAL = 1.0
+
 
 def get_access_token_flow(*args, **kwargs) -> HttpFlow[str]:
     def fn(response):
@@ -51,6 +53,8 @@ def get_access_token_response_flow(
     # Step 4: User -> Auth0 Tenant: Authenticate and Consent (Continued)
     # Step 5: Auth0 Tenant -> Regular Web App: Authorization Code
     r = yield request_provide_username_password(r.url, username, password, state)
+    while r.status_code == 504:
+        r = yield request_provide_username_password(r.url, username, password, state, sleep=DEFAULT_INTERVAL)
     if r.status_code != 200:
         raise FlowError("Failed to provide password to auth0", r)
     # Step 6. Auth0 Tenant -> Regular Web App: Authorization Code + Client ID + Client Secret to /oauth/token

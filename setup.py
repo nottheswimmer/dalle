@@ -15,7 +15,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='pydalle',
-    version='0.1.0',
+    version='0.1.1',
     description='A library for providing programmatic access to the DALL·E 2 API',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -38,7 +38,7 @@ setup(
     extras_require={
         'async': ['aiofiles', 'aiohttp'],
         'sync': ['requests'],
-        'images': ['pillow'],
-        'all': ['aiofiles', 'aiohttp', 'requests', 'pillow'],
+        'images': ['pillow', 'numpy'],
+        'all': ['aiofiles', 'aiohttp', 'requests', 'pillow', 'numpy'],
     },
 )

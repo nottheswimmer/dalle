@@ -1,3 +1,7 @@
+"""
+This module contains all functions pydalle uses to interface with the filesystem.
+"""
+
 import warnings
 from os import PathLike
 from typing import Union, IO
