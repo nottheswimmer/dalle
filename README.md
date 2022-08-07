@@ -9,19 +9,25 @@ This library provides basic programmatic access to the DALL·E 2 API.
 The intent of this library is to provide researchers with a means to easily layout
 results from DALL·E 2 into a jupyter notebook or similar.
 
-Read the documentation for pydalle on [readthedocs](https://pydalle.readthedocs.io/en/latest/pydalle.imperative.api.html?#module-pydalle.imperative.api.labs).
+pydalle has two main modes of use:
+
+- **`pydalle.Dalle`**: This is the main class of the library. It provides a user-friendly
+  interface to the DALL·E 2 API. [Read more here.][4].
+- **`pydalle.imperative.api.labs`**: This module provides a set of lower-level functions that
+  can be used to interact with the DALL·E 2 API. [Read more here.][5].
 
 ## Installation
 
-    pip install pydalle
+### Install with all dependencies
 
-If you want to use sync methods, also make sure you have the `requests` library installed.
+    pip install pydalle[all]     # Install all dependencies, recommended for most users
 
-    pip install requests
+### Pick and choose your dependencies
 
-If you want to use async methods, also make sure you have the `aiohttp` library installed.
-
-    pip install aiohttp
+    pip install pydalle          # Just install the library with no optional dependencies
+    pip install pydalle[sync]    # Also installs requests (for synchronous networking)
+    pip install pydalle[async]   # Also installs aiohttp and aiofiles  (required for async networking / file handling)
+    pip install pydalle[images]  # Also installs Pillow (required for help with image processing)
 
 ## Tips
 
@@ -31,73 +37,65 @@ If you want to use async methods, also make sure you have the `aiohttp` library 
 
 - Be mindful about how easy this library makes it for you to spend your money / DALL·E 2 credits.
 
-## Features
+## Getting Started
 
-- `get_bearer_token` / `get_bearer_token_async`: Get a bearer token from username and password (discards access token)
-- `get_task` / `get_task_async`: Get a task by ID
-- `get_tasks` / `get_tasks_async`: Get tasks created after a given timestamp
-- `create_text2im_task` / `create_text2im_task_async`: Create a task to generate an image from a text
-- `create_variations_task` / `create_variations_task_async`: Create a task to generate variations of an image
-- `create_inpainting_task` / `create_inpainting_task_async`: Create a task to generate an image from a mask and caption
-- `poll_for_task_completion /` `poll_for_task_completion_async`: Poll for a task until it is complete
-- `download_generation` / `download_generation_async`: Download the image bytes for a given generation ID
-  (the generation also has an image_path field, but it does not include the necessary watermark so use this instead)
-- `share_generation` / `share_generation_async`: Make the generation with the given ID public. The share_url property on the returned object 
-   will include the share link for this image
-- `save_generations / save_generations_async`: Save the generations with the given generation IDs to your collection. Returns a
-    Collection object for the collection saved to.
-- `flag_generation_sensitive / flag_generation_sensitive_async`: Flag a generation as sensitive. Returns a
-    UserFlag object with details about the flag.
-- `flag_generation_unexpected / flag_generation_unexpected_async`: Flag a generation as unexpected. Returns a
-    UserFlag object with details about the flag.
-- `get_credit_summary / get_credit_summary_async`: Get a summary of your DALL·E 2 billing information.
-- `get_access_token` / `get_access_token_async`: Get an access token from username and password. Only needed for the following:
-  - `get_bearer_token_with_access_token` / `get_bearer_token_with_access_token_async`: Get a bearer token from an access token.
-  - `get_login_info` / `get_login_info_async`: Get information for the user (which includes the bearer token).
+Once you have installed pydalle, you can start using it by importing it and creating a `Dalle` object.
+You can find all the available methods on the [Dalle class][4].
 
-## Image input
+```python
+import os
 
-All the following notes on method usage also apply to each method's corresponding async version.
+from pydalle import Dalle
 
-- `create_variations_task` and `create_inpainting_task` both accept a parameter called `parent_id_or_image`.
-    - For `create_variations_task`, it is required.
-    - For `create_inpainting_task`, it will default to the value of the image_mask parameter if not provided.
-    - It can be a string in any of the following formats:
-        - A "generation ID" (format: `generation-[a-zA-Z0-9]{24}`) -- can be obtained with prefix included from a task
-          with `task.generations[i].id`
-        - A "prompt ID" (format: `prompt-[a-zA-Z0-9]{24}`) -- can be obtained with prefix included from a task
-          with `task.prompt_id or task.prompt.id`
-        - A base64-encoded PNG image decoded as a string -- full examples in `dev.ipynb` and `dev.py`
-- `create_inpainting_task` also accepts the parameter `image_mask`
-    - It must be a base64-encoded PNG image decoded as a string -- full examples in `dev.ipynb` and `dev.py`
+OPENAI_USERNAME = os.environ.get('OPENAI_USERNAME')
+OPENAI_PASSWORD = os.environ.get('OPENAI_PASSWORD')
 
-## Examples
 
-See the following files for examples:
+def main():
+    client = Dalle(OPENAI_USERNAME, OPENAI_PASSWORD)
+    print(f"Client created. {client.get_credit_summary().aggregate_credits} credits remaining...")
+    tasks = client.get_tasks(limit=5)
+    print(f"{len(tasks)} tasks found...")
 
-- [dev.ipynb](./dev.ipynb) - Example of using the library in a jupyter notebook
-- [dev.py](./dev.py) - Example of using the library in a python script
-- [dev_async.py](./dev_async.py) - Example of using the library in a python script using asyncio
+    print("Attempting to do a text2im task...")
+    completed_text2im_task = client.text2im("A cute cat")
+    for image in completed_text2im_task.download():
+        image.to_pil().show()
 
-## Useful tools
+    print("Attempting to create variations task on the first cat...")
+    first_generation = completed_text2im_task.generations[0]
+    completed_variation_task = first_generation.variations()
+    first_variation = completed_variation_task.generations[0]
+    first_image = first_variation.download().to_pil()
+    first_image.show()
 
-While not dependencies of this library, the following tools are useful companions when working with images:
+    print("Attempting to create inpainting task and showing the mask...")
+    # Make the right-side of the image transparent
+    masked_image = first_image.convert("RGBA")
+    for i in range(masked_image.width):
+        if i > masked_image.width / 2:
+            for j in range(masked_image.height):
+                masked_image.putpixel((i, j), (0, 0, 0, 0))
+    masked_image.show("inpainting mask")
+    completed_inpainting_task = first_generation.inpainting("A cute cat, with a dark side", masked_image)
+    for image in completed_inpainting_task.download():
+        image.to_pil().show()
 
-- PIL: `pip install Pillow`
-    - Displaying an image in a notebook or in a Python script
-    - Adding an alpha channel to an image (for creating masks)
-    - Converting an image to PNG format (for uploading to DALL·E 2)
-    - Resizing, cropping, padding, and masking images (etc.)
-    - Saving images to disk
-- matplotlib: `pip install matplotlib`
-    - Arranging images in a grid for display
-- numpy: `pip install numpy`
-    - Vectorization of image processing operations
-      (if you find yourself doing a lot of slow loops over pixels, try putting the image in a numpy array and
-      vectorizing the loops)
+
+if __name__ == '__main__':
+    main()
+```
+
+For an equivalent async code example, see [examples/dev_async.py](./examples/dev_async.py).
+
+For examples of the low-level API and using this in a notebook, see the [examples](./examples) directory.
 
 [1]: https://labs.openai.com/waitlist
 
 [2]: https://labs.openai.com/policies/content-policy
 
 [3]: https://labs.openai.com/policies/terms
+
+[4]: https://pydalle.readthedocs.io/en/latest/pydalle.imperative.client.html#pydalle.imperative.client.dalle.Dalle
+
+[5]: https://pydalle.readthedocs.io/en/latest/pydalle.imperative.api.html#module-pydalle.imperative.api.labs

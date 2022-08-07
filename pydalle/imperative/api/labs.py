@@ -10,7 +10,7 @@ from pydalle.functional.assumptions import OPENAI_AUTH0_DOMAIN, OPENAI_AUTH0_CLI
 from pydalle.functional.api.flow.labs import get_bearer_token_flow, get_tasks_flow, get_task_flow, \
     create_text2im_task_flow, poll_for_task_completion_flow, create_variations_task_flow, \
     create_inpainting_task_flow, download_generation_flow, share_generation_flow, save_generations_flow, \
-    get_login_info_flow, flag_generation_flow, get_credit_summary_flow
+    get_login_info_flow, flag_generation_flow, get_credit_summary_flow, get_generation_flow
 from pydalle.imperative.api.auth0 import get_access_token_from_credentials, get_access_token_from_credentials_async
 from pydalle.imperative.outside.internet import session_flow, session_flow_async
 
@@ -89,21 +89,24 @@ async def get_bearer_token_from_access_token_async(access_token: str, headers: O
     return await session_flow_async(get_bearer_token_flow, headers, access_token=access_token)
 
 
-def get_tasks(bearer_token: str, from_ts: Optional[int] = None, headers: Optional[Dict[str, str]] = None) -> TaskList:
+def get_tasks(bearer_token: str, limit: Optional[int] = None, from_ts: Optional[int] = None,
+              headers: Optional[Dict[str, str]] = None) -> TaskList:
     """
     Get the list of tasks for the account authenticated by the given bearer token.
 
     :param bearer_token: The bearer token to use.
     :param from_ts: Optional unix timestamp to exclude tasks created before this time.
+    :param limit: Optional limit on the number of tasks to return. Server-side and maximum default is 50.
     :param headers: Optional headers to send with the request.
     :return: The list of tasks for the account.
     """
-    return session_flow(get_tasks_flow, headers, from_ts=from_ts, bearer_token=bearer_token)
+    return session_flow(get_tasks_flow, headers, limit=limit, from_ts=from_ts, bearer_token=bearer_token)
 
 
 async def get_tasks_async(bearer_token: str, from_ts: Optional[int] = None,
+                          limit: Optional[int] = None,
                           headers: Optional[Dict[str, str]] = None) -> TaskList:
-    return await session_flow_async(get_tasks_flow, headers, from_ts=from_ts, bearer_token=bearer_token)
+    return await session_flow_async(get_tasks_flow, headers, limit=limit, from_ts=from_ts, bearer_token=bearer_token)
 
 
 def get_task(bearer_token: str, task_id: str, headers: Optional[Dict[str, str]] = None) -> Task:
@@ -190,24 +193,25 @@ async def create_inpainting_task_async(bearer_token: str, caption: str, masked_i
 
 
 def poll_for_task_completion(bearer_token: str, task_id: str, interval: float = 1.0,
-                             headers: Optional[Dict[str, str]] = None) -> Task:
+                             max_attempts: int = 1000, headers: Optional[Dict[str, str]] = None) -> Task:
     """
     Poll for the completion of a task.
 
     :param bearer_token: The bearer token to use.
     :param task_id: The ID of the task to poll.
     :param interval: The interval to wait between requests.
+    :param max_attempts: The maximum number of times to poll before giving up.
     :param headers: Optional headers to send with the request.
     :return: The task with the given ID.
     """
     return session_flow(poll_for_task_completion_flow, headers, task_id=task_id, bearer_token=bearer_token,
-                        interval=interval)
+                        interval=interval, _max_attempts=max_attempts)
 
 
 async def poll_for_task_completion_async(bearer_token: str, task_id: str, interval: float = 1.0,
-                                         headers: Optional[Dict[str, str]] = None) -> Task:
+                                         max_attempts: int = 1000, headers: Optional[Dict[str, str]] = None) -> Task:
     return await session_flow_async(poll_for_task_completion_flow, headers, task_id=task_id, bearer_token=bearer_token,
-                                    interval=interval)
+                                    interval=interval, _max_attempts=max_attempts)
 
 
 def download_generation(bearer_token: str, generation_id: str, headers: Optional[Dict[str, str]] = None) -> bytes:
@@ -222,8 +226,10 @@ def download_generation(bearer_token: str, generation_id: str, headers: Optional
     return session_flow(download_generation_flow, headers, generation_id=generation_id, bearer_token=bearer_token)
 
 
-async def download_generation_async(bearer_token: str, task_id: str, headers: Optional[Dict[str, str]] = None) -> bytes:
-    return await session_flow_async(download_generation_flow, headers, task_id=task_id, bearer_token=bearer_token)
+async def download_generation_async(bearer_token: str, generation_id: str,
+                                    headers: Optional[Dict[str, str]] = None) -> bytes:
+    return await session_flow_async(download_generation_flow, headers, generation_id=generation_id,
+                                    bearer_token=bearer_token)
 
 
 def share_generation(bearer_token: str, generation_id: str, headers: Optional[Dict[str, str]] = None) -> Generation:
@@ -327,6 +333,25 @@ def get_credit_summary(bearer_token: str, headers: Optional[Dict[str, str]] = No
 
 async def get_credit_summary_async(bearer_token: str, headers: Optional[Dict[str, str]] = None) -> BillingInfo:
     return await session_flow_async(get_credit_summary_flow, headers, bearer_token=bearer_token)
+
+
+def get_generation(bearer_token: str, generation_id: str, headers: Optional[Dict[str, str]] = None) -> Generation:
+    """
+    Get a generation by its ID.
+
+    :param bearer_token: The bearer token to use.
+    :param generation_id: The ID of the generation to get.
+    :param headers: Optional headers to send with the request.
+    :return: The generation.
+    """
+    return session_flow(get_generation_flow, headers, generation_id=generation_id, bearer_token=bearer_token)
+
+
+async def get_generation_async(bearer_token: str, generation_id: str,
+                               headers: Optional[Dict[str, str]] = None) -> Generation:
+    return await session_flow_async(get_generation_flow, headers, generation_id=generation_id,
+                                    bearer_token=bearer_token)
+
 
 for name, func in list(globals().items()):
     if f"{name}_async" in locals():

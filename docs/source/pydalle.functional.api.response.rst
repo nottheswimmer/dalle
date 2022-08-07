@@ -4,8 +4,6 @@ pydalle.functional.api.response package
 Submodules
 ----------
 
-pydalle.functional.api.response.labs module
--------------------------------------------
 
 .. automodule:: pydalle.functional.api.response.labs
    :members:

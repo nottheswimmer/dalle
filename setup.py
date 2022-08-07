@@ -5,7 +5,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='pydalle',
-    version='0.0.9',
+    version='0.1.0',
     description='A library for providing programmatic access to the DALL·E 2 API',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     license='MIT',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
@@ -25,4 +25,10 @@ setup(
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+    extras_require={
+        'async': ['aiofiles', 'aiohttp'],
+        'sync': ['requests'],
+        'images': ['pillow'],
+        'all': ['aiofiles', 'aiohttp', 'requests', 'pillow'],
+    },
 )

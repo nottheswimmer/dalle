@@ -6,7 +6,7 @@ from typing import Optional, List
 
 from pydalle.functional.api.request.labs import login_request, get_tasks_request, create_task_request, \
     get_task_request, download_generation_request, save_generations_request, share_generation_request, \
-    flag_generation_request, get_credit_summary_request
+    flag_generation_request, get_credit_summary_request, get_generation_request
 from pydalle.functional.api.response.labs import TaskList, TaskType, Task, Generation, Collection, Login, UserFlag, \
     BillingInfo
 from pydalle.functional.types import HttpFlow, FlowError, JsonDict
@@ -46,10 +46,10 @@ def get_login_info_flow(access_token: str) -> HttpFlow[Login]:
 
 
 
-def get_tasks_flow(bearer_token: str, from_ts: Optional[int] = None) -> HttpFlow[TaskList]:
-    r = yield get_tasks_request(bearer_token, from_ts)
+def get_tasks_flow(bearer_token: str, limit: Optional[int] = None, from_ts: Optional[int] = None) -> HttpFlow[TaskList]:
+    r = yield get_tasks_request(bearer_token, limit, from_ts)
     while r.status_code == 504:
-        r = yield get_tasks_request(bearer_token, from_ts, sleep=DEFAULT_INTERVAL)
+        r = yield get_tasks_request(bearer_token, limit, from_ts, sleep=DEFAULT_INTERVAL)
     j = try_json(r, status_code=200)
     try:
         return TaskList.from_dict(j)
@@ -109,6 +109,17 @@ def get_task_flow(bearer_token: str, task_id: str) -> HttpFlow[Task]:
     j = try_json(r, status_code=200)
     try:
         return Task.from_dict(j)
+    except Exception as e:
+        raise FlowError("Failed to parse response", r) from e
+
+
+def get_generation_flow(bearer_token: str, generation_id: str) -> HttpFlow[Generation]:
+    r = yield get_generation_request(bearer_token, generation_id=generation_id)
+    while r.status_code == 504:
+        r = yield get_generation_request(bearer_token, generation_id=generation_id, sleep=DEFAULT_INTERVAL)
+    j = try_json(r, status_code=200)
+    try:
+        return Generation.from_dict(j)
     except Exception as e:
         raise FlowError("Failed to parse response", r) from e
 

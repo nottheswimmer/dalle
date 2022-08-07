@@ -7,7 +7,7 @@ from typing import Optional, List
 
 from pydalle.functional.api.response.labs import TaskType
 from pydalle.functional.assumptions import OPENAI_LABS_TASKS_URL, OPENAI_LABS_LOGIN_URL, \
-    OPENAI_LABS_TASK_URL_TEMPLATE, OPENAI_LABS_GENERATION_DOWNLOAD_URL_TEMPLATE, \
+    OPENAI_LABS_TASK_URL_TEMPLATE,OPENAI_LABS_GENERATION_URL_TEMPLATE,  OPENAI_LABS_GENERATION_DOWNLOAD_URL_TEMPLATE, \
     OPENAI_LABS_GENERATION_SHARE_URL_TEMPLATE, OPENAI_LABS_COLLECTION_GENERATION_URL_TEMPLATE, \
     OPENAI_LABS_GENERATION_FLAG_URL_TEMPLATE, OPENAI_LABS_BILLING_CREDIT_SUMMARY_URL
 from pydalle.functional.types import HttpRequest
@@ -21,13 +21,19 @@ def get_task_request(bearer_token: str, task_id: str, sleep: Optional[float] = N
                        sleep=sleep)
 
 
-def get_tasks_request(bearer_token: str, from_ts: Optional[int] = None, sleep: Optional[float] = None) -> HttpRequest:
+def get_tasks_request(bearer_token: str, limit: Optional[int] = None, from_ts: Optional[int] = None, sleep: Optional[float] = None) -> HttpRequest:
     return HttpRequest(method="get",
                        url=OPENAI_LABS_TASKS_URL,
-                       params=filter_none({"from_ts": from_ts}),
+                       params=filter_none({"from_ts": from_ts, "limit": limit}),
                        headers={"Authorization": f"Bearer {bearer_token}"},
                        sleep=sleep)
 
+
+def get_generation_request(bearer_token: str, generation_id: str, sleep: Optional[float] = None) -> HttpRequest:
+    return HttpRequest(method="get",
+                       url=OPENAI_LABS_GENERATION_URL_TEMPLATE % generation_id,
+                       headers={"Authorization": f"Bearer {bearer_token}"},
+                       sleep=sleep)
 
 def login_request(access_token: str, sleep: Optional[float] = None) -> HttpRequest:
     return HttpRequest(method="post", url=OPENAI_LABS_LOGIN_URL, headers={"Authorization": f"Bearer {access_token}"},

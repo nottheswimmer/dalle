@@ -104,14 +104,30 @@ class LazyImportError:
         self.name = name
         self.e = e
 
-    def throw(self):
+    def throw(self, reason, *args, **kwargs):
+        if reason == "__call__":
+            prefix = f"{self.name}("
+            prefix += ", ".join(map(str, args))
+            prefix += ", " if args else ""
+            prefix += ", ".join(f"{k}={v}" for k, v in kwargs.items())
+            prefix += ")"
+        elif reason == "__getattr__":
+            prefix = f"{self.name}.{args[0]}"
+        else:
+            prefix = f"{self.name}.{reason}"
+
         raise ImportError(f"""\
-The {self.name} package is required for this module.
+{prefix}: The {self.name} package is required for this module.
 To install it, run:
     pip install {self.name}""") from self.e
 
     def __call__(self, *args, **kwargs):
-        self.throw()
+        self.throw("__call__", *args, **kwargs)
 
     def __getattr__(self, name):
-        self.throw()
+        # Help readthedocs put something here for optional dependencies
+        if name == "__qualname__":
+            return self.name
+        if name == "__args__":
+            return ()
+        self.throw("__getattr__", name)
