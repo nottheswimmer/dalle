@@ -312,13 +312,19 @@ ParentLike = Union[ImageLike, GenerationLike, PromptLike]
 
 
 def _get_image_png_base64_no_io(image: ImageLike) -> str:
+    if isinstance(image, str):
+        if image.startswith(PNG_BASE64_PREFIX.decode()):
+            # If it's already a base64 encoded PNG, we're good
+            return image
+        try:
+            # If it's a base64 encoded string in the wrong format, we'll try the PIL trick
+            decoded = base64.b64decode(image)
+            if image == base64.b64encode(decoded).decode():
+                return base64.b64encode(image_bytes_to_png_bytes(decoded)).decode()
+        except ValueError:
+            pass
     if isinstance(image, WrappedImage):
         return base64.b64encode(image.png_bytes).decode()
-    if str(image.__class__).startswith("<class 'PIL."):
-        # If it's a PIL image, we'll make sure it's a PNG and return the base64
-        return base64.b64encode(pil_image_to_png_bytes(image)).decode()
-    if isinstance(image, ndarray):
-        return base64.b64encode(pil_image_to_png_bytes(np_array_to_pil_image(image))).decode()
     if isinstance(image, bytes):
         if image.startswith(PNG_BASE64_PREFIX):
             # If it's already a base64 encoded PNG, we just need to decode it
@@ -339,17 +345,17 @@ def _get_image_png_base64_no_io(image: ImageLike) -> str:
         # Best guess is that it's an image of some other format.
         # If the user has PIL installed, we'll try to convert it to PNG
         return base64.b64encode(image_bytes_to_png_bytes(image)).decode()
-    if isinstance(image, str):
-        if image.startswith(PNG_BASE64_PREFIX.decode()):
-            # If it's already a base64 encoded PNG, we're good
-            return image
-        try:
-            # If it's a base64 encoded string in the wrong format, we'll try the PIL trick
-            decoded = base64.b64decode(image)
-            if image == base64.b64encode(decoded).decode():
-                return base64.b64encode(image_bytes_to_png_bytes(decoded)).decode()
-        except ValueError:
-            pass
+    try:
+        if isinstance(image, ndarray):
+            return base64.b64encode(pil_image_to_png_bytes(np_array_to_pil_image(image))).decode()
+    except ImportError:
+        pass
+    try:
+        if str(image.__class__).startswith("<class 'PIL."):
+            # If it's a PIL image, we'll make sure it's a PNG and return the base64
+            return base64.b64encode(pil_image_to_png_bytes(image)).decode()
+    except ImportError:
+        pass
 
 
 def get_image_png_base64(image: ImageLike, headers: Optional[dict]) -> str:

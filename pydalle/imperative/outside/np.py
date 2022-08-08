@@ -14,9 +14,9 @@ except ImportError as e:
 from pydalle.imperative.outside.pil import PILImageType, PILImage
 
 
-def pil_image_to_np_array(image: PILImageType) -> ndarray:
+def pil_image_to_np_array(image: PILImageType) -> 'ndarray':
     return array(image)
 
 
-def np_array_to_pil_image(array: ndarray) -> PILImageType:
+def np_array_to_pil_image(array: 'ndarray') -> PILImageType:
     return PILImage.fromarray(array)
