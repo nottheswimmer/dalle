@@ -206,12 +206,10 @@ class Collection:
 class Breakdown:
     raw: dict
     free: int
-    paid_dalle_15_115: int
 
     @classmethod
     def from_dict(cls, d: dict) -> 'Breakdown':
         return cls(free=d["free"],
-                   paid_dalle_15_115=d["paid_dalle_15_115"],
                    raw=d)
 
 
