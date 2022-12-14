@@ -1,3 +1,5 @@
+**ATTENTION: pydalle is now no longer supported as there is an [official API](https://beta.openai.com/docs/guides/images). With the recent addition of a captcha to the OpenAI login page, the automated approach to get a token used in this library won't work any longer anyway. Thanks for using pydalle while it was relevant!**
+
 # pydalle: A DALL·E 2 API Wrapper for Python
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydalle)
